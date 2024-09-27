@@ -1,0 +1,18 @@
+<!-- survey_success.html -->
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="my-10">
+    <h1 class="text-medium text-navyBlue text-center text-2xl">Republic of the Philippines</h1>
+    <h1 class="text-bold text-navyBlue text-center text-2xl">DEPARTMENT OF LABOR AND EMPLOYMENT</h1>
+</div>
+
+<div class="items-center mx-72">
+    <h1 class="text-bold text-navyBlue text-center text-xl">THANK YOU FOR YOUR RESPONSE!</h1>
+    <div class="flex justify-center my-4">
+        <a href="{% url 'survey_index' %}" class="bg-navyBlue text-white py-2 px-6 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+            Back to Survey
+        </a>
+    </div>
+</div>
+{% endblock %}

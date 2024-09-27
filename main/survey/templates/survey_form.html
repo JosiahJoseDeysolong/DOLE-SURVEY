@@ -1,0 +1,111 @@
+{% extends 'layout.html' %}
+
+<!-- survey_form.html -->   
+{% block title %}
+    Survey
+{% endblock %}
+
+{% block content %}
+<div class="container mx-auto">
+        <div class="my-10  flex items-center justify-center">
+        <img src="https://dolexportal.com/img/agencies/client-16.png" class="h-14 mx-4" alt=" ">
+        <div> 
+            <h1 class="font-bold text-navyBlue text-xl">Republic of the Philippines</h1>
+            <h1 class="font-bold text-navyBlue text-2xl">DEPARTMENT OF LABOR AND EMPLOYMENT</h1>
+        </div>
+    </div>
+
+    <div class="lg:w-11/12 mx-auto p-5">
+        <form method="POST">
+            {% csrf_token %}
+
+            {% include 'form_field.html' with label=form.office.label field=form.office errors=form.office.errors %}
+
+            <!-- service field -->
+            <div class="bg-beige border-2 border-navyBlue rounded-lg px-8 py-6 my-3">
+                <h1 class="text-bold font-medium text-navyBlue my-2">{{ form.service.label }}</h1>
+                <select id="serviceSelect" name="service" class="px-3 py-2 rounded-full w-1/2" required>
+                    <option value="">Select a service</option>
+                    {% for service in form.service.field.queryset %}
+                        <option value="{{ service.id }}" {% if form.service.value == service.id %}selected{% endif %}>
+                            {{ service.service_name }}
+                        </option>
+                    {% endfor %}
+                </select>
+                {% if form.service.errors %}
+                    <ul class="text-red-500 text-bold text-sm text-right mt-2">
+                        {% for error in form.service.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+
+            {% include 'form_field.html' with label=form.name.label field=form.name errors=form.name.errors %}
+            {% include 'form_field.html' with label=form.contact_number.label field=form.contact_number errors=form.contact_number.errors %}
+            {% include 'form_field.html' with label=form.email.label field=form.email errors=form.email.errors %}
+            {% include 'form_field.html' with label=form.client_type.label field=form.client_type errors=form.client_type.errors %}
+            {% include 'form_field.html' with label=form.date.label field=form.date errors=form.date.errors %}
+            {% include 'form_field.html' with label=form.sex.label field=form.sex errors=form.sex.errors %}
+            {% include 'form_field.html' with label=form.age.label field=form.age errors=form.age.errors %}
+            {% include 'form_field.html' with label=form.region.label field=form.region errors=form.region.errors %}
+        
+            <div class="bg-navyLightBlue border-2 border-navyBlue rounded-lg px-8 py-6 my-3 ">
+                <h1 class="text-bold text-lg text-beige ">INSTRUCTIONS</h1>
+                <p class="text-base text-beige">Check mark ( / ) your answer to the Citizen’s Charter (CC) questions. 
+                    The Citizen’s Charter is an official document that reflects the services of a government 
+                    agency/office including its requirements, fees, and processing times among others.
+                </p>
+            </div>
+
+            {% include 'form_field.html' with label=form.cc1.label field=form.cc1 errors=form.cc1.errors %}
+            {% include 'form_field.html' with label=form.cc2.label field=form.cc2 errors=form.cc2.errors %}
+            {% include 'form_field.html' with label=form.cc3.label field=form.cc3 errors=form.cc3.errors %}
+          
+            <div class="bg-navyLightBlue border-2 border-navyBlue rounded-lg px-8 py-6 my-3 ">
+                <h1 class="text-bold text-lg text-beige ">INSTRUCTIONS</h1>
+                <p class="text-base text-beige"> For SQD 0-8,please put a check mark ( / ) on the column that best corresponds to your answer.
+                </p>
+            </div>
+
+            {% include 'form_field.html' with label=form.sqd0.label field=form.sqd0 errors=form.sqd0.errors %}
+            {% include 'form_field.html' with label=form.sqd1.label field=form.sqd1 errors=form.sqd1.errors %}
+            {% include 'form_field.html' with label=form.sqd2.label field=form.sqd2 errors=form.sqd2.errors %}
+            {% include 'form_field.html' with label=form.sqd3.label field=form.sqd3 errors=form.sqd3.errors %}
+            {% include 'form_field.html' with label=form.sqd4.label field=form.sqd4 errors=form.sqd4.errors %}
+            {% include 'form_field.html' with label=form.sqd5.label field=form.sqd5 errors=form.sqd5.errors %}
+            {% include 'form_field.html' with label=form.sqd6.label field=form.sqd6 errors=form.sqd6.errors %}
+            {% include 'form_field.html' with label=form.sqd7.label field=form.sqd7 errors=form.sqd7.errors %}
+            {% include 'form_field.html' with label=form.sqd8.label field=form.sqd8 errors=form.sqd8.errors %}
+            {% include 'form_field.html' with label=form.suggestions.label field=form.suggestions errors=form.suggestions.errors %}
+
+            <div class="bg-navyLightBlue border-2 border-navyBlue rounded-lg mb-10 flex">
+                <input class="bg-navyBlue border-2 py-2 px-8 rounded-full m-5 text-bold text-beige border-navyBlue cursor-pointer hover:text-navyBlue hover:bg-navyLighterBlue" type="submit" value="SUBMIT">
+                <input class="bg-beige border-2 py-2 px-8 rounded-full my-5 text-bold text-navyBlue border-navyBlue cursor-pointer hover:bg-navyLighterBlue hover:text-beige" 
+                type="reset" value="CLEAR">
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('id_office').addEventListener('change', function() {
+            const officeId = this.value;
+            fetch(`/survey/get-services/${officeId}/`)
+                .then(response => response.json())
+                .then(data => {
+                    const serviceSelect = document.getElementById('serviceSelect');
+                    serviceSelect.innerHTML = '<option value="">Select a service</option>';
+                    data.services.forEach(service => {
+                        const option = document.createElement('option');
+                        option.value = service.id;
+                        option.textContent = service.service_name;
+                        serviceSelect.appendChild(option);
+                    });
+                });
+        });
+    });
+</script>
+
+{% endblock %}

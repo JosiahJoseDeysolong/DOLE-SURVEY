@@ -1,0 +1,121 @@
+<!-- user_list -->
+{% extends 'layout.html' %}
+{% block title %}
+    Users
+{% endblock %}
+
+{% block content %}
+
+{% include 'user_url.html'%}
+
+<div class="container w-11/12 mx-auto">
+    <div class="flex justify-between items-center py-2">
+ 
+        <form method="GET" class="w-full">
+            <div class="flex items-center">
+                <!-- Office Dropdown -->
+                <div class="relative inline-block">
+                    <button id="dropdown-button" class="transition duration-200 inline-flex items-center py-2.5 px-4 text-sm font-medium text-beige bg-navyBlue rounded-s-lg border-2 border-navyBlue hover:bg-beige hover:text-navyBlue" type="button">
+                        Office
+                        <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
+                        </svg>
+                    </button>
+                    <div id="dropdown" class="z-10 hidden absolute bg-beige divide-y divide-black rounded-lg shadow w-44 mt-2 left-0">
+                        <ul class="py-2 text-sm text-navyBlue" aria-labelledby="dropdown-button">
+                            <li>
+                                <button type="submit" name="office" value="" class="inline-flex w-full px-4 py-2 hover:bg-navyLighterBlue">All Offices</button>
+                            </li>
+                            {% for office in offices %}
+                            <li>
+                                <button type="submit" name="office" value="{{ office.id }}" class="inline-flex w-full px-4 py-2 hover:bg-navyLighterBlue">{{ office.office_name }}</button>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Search Input -->
+                <div class="relative w-full">
+                    <input type="search" name="search" value="{{ search_term }}" class="block p-2.5 w-full z-20 text-sm text-navyBlue bg-beige rounded-e-lg border-2 border-navyBlue border-s-2 border border-navyBlue focus:ring-navyBlue focus:border-navyBlue" placeholder="Search ..." />
+                    <button type="submit" class="absolute top-0 end-0 p-2.5 text-sm font-medium h-full text-beige bg-navyBlue rounded-e-lg border border-navyBlue hover:bg-navyBlue focus:ring-4 focus:outline-none focus:ring-navyBlue">
+                        <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+                        </svg>
+                        <span class="sr-only">Search</span>
+                    </button>
+                </div>
+            </div>
+        </form>
+
+        <div class="w-1/4 flex justify-end ">
+          
+            <a href="{% url 'create_user' %}" class="border-navyBlue border-2 p-2 rounded-full bg-beige text-navyBlue hover:bg-navyBlue hover:text-beige transition duration-200">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M18 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0ZM3 19.235v-.11a6.375 6.375 0 0 1 12.75 0v.109A12.318 12.318 0 0 1 9.374 21c-2.331 0-4.512-.645-6.374-1.766Z" />
+                </svg>
+            </a>
+        </div>
+        
+    </div>
+
+    <table class="text-beige font-bold w-full border-2 border-navyBlue bg-navyBlue">
+        <thead>
+            <tr>
+                <th class="py-2">Username</th>
+                <th class="py-2">Office</th>
+                <th class="py-2">Actions</th>
+            </tr>
+        </thead>
+        <tbody class="text-center">
+            {% for user in page_obj %}
+            <tr class="odd:bg-navyLightestBlue even:bg-beige text-navyBlue font-normal">
+                <td class="py-2">{{ user.username }}</td>
+                <td class="py-2">
+                    {% if user.profile.office %}
+                        {{ user.profile.office.office_name }}
+                    {% else %}
+                        No Office Assigned
+                    {% endif %}
+                </td>
+                <td class="py-2 text-center">
+                    <a href="{% url 'edit_user' user.id %}" class="even:bg-beige even:text-navyBlue inline-flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+                        </svg>
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Pagination Controls -->
+    <div class="flex justify-between items-center mt-4">
+        <div class="flex space-x-2">
+            {% if page_obj.has_previous %}
+                <a href="?page=1{% if search_term %}&search={{ search_term }}{% endif %}{% if selected_office %}&office={{ selected_office }}{% endif %}" class="px-3 py-1 border border-gray-300 rounded-md bg-white text-gray-700 hover:bg-gray-100">First</a>
+                <a href="?page={{ page_obj.previous_page_number }}{% if search_term %}&search={{ search_term }}{% endif %}{% if selected_office %}&office={{ selected_office }}{% endif %}" class="px-3 py-1 border border-gray-300 rounded-md bg-white text-gray-700 hover:bg-gray-100">Previous</a>
+            {% endif %}
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}{% if search_term %}&search={{ search_term }}{% endif %}{% if selected_office %}&office={{ selected_office }}{% endif %}" class="px-3 py-1 border border-gray-300 rounded-md bg-white text-gray-700 hover:bg-gray-100">Next</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}{% if search_term %}&search={{ search_term }}{% endif %}{% if selected_office %}&office={{ selected_office }}{% endif %}" class="px-3 py-1 border border-gray-300 rounded-md bg-white text-gray-700 hover:bg-gray-100">Last</a>
+            {% endif %}
+        </div>
+        <span class="text-gray-700">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+    </div>
+</div>
+
+<!-- JavaScript for dropdown -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const dropdownButton = document.getElementById('dropdown-button');
+        const dropdownMenu = document.getElementById('dropdown');
+        
+        dropdownButton.addEventListener('click', function () {
+            dropdownMenu.classList.toggle('hidden');
+        });
+    });
+</script>
+
+{% endblock %}

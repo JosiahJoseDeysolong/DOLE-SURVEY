@@ -1,0 +1,351 @@
+<!--survey_statistics.html-->
+{% extends 'layout.html' %}
+
+{% block title %}
+    Survey Statistics
+{% endblock %}
+
+{% block content %}
+{% include 'stats_url.html'%}
+
+<div class="bg-gradient-to-r from-navyLighterBlue to-navyBlue container mx-auto w-11/12 rounded-lg my-5 flex">
+    <div class="bg-navyBlue rounded-l-lg p-4"></div> 
+    <div class="w-11/12 pt-5 pl-5 pb-5"> 
+        <div class="bg-beige rounded-lg w-fit text-2xl font-bold text-navyBlue mb-4 p-5 border-2 border-navyBlue">Survey Statistics for 
+            {{ office.office_name }}
+        </div>
+    
+        <form method="GET" action="{% url 'survey_statistics' office.id %}">
+            <div class="bg-beige rounded-lg w-fit text-2xl font-bold text-navyBlue p-2 border-2 border-navyBlue lg:flex gap-x-2">
+                <div class="mb-4">
+                    <label for="serviceSelect" class="block text-navyBlue">Service:</label>
+                    <select id="serviceSelect" name="service" class="border rounded p-2">
+                        <option value="">All Services</option>
+                        {% for service in services %}
+                        <option value="{{ service.id }}" {% if selected_service|stringformat:"s" == service.id|stringformat:"s" %}selected{% endif %}>
+                            {{ service.service_name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label for="startDate" class="block text-navyBlue">From:</label>
+                    <input type="date" id="startDate" name="start_date" value="{{ request.GET.start_date }}" class="border rounded p-2">
+                </div>
+                <div class="mb-4">
+                    <label for="endDate" class="block text-navyBlue">To:</label>
+                    <input type="date" id="endDate" name="end_date" value="{{ request.GET.end_date }}" class="border rounded p-2">
+                </div>
+                <div class="mb-4">
+                    <label for="searchQuery" class="block text-navyBlue">Search:</label>
+                    <input type="text" id="searchQuery" name="search" value="{{ search_query }}" placeholder="Search by name, email, or contact" class="border rounded p-2">
+                </div>
+        
+                <div class="flex items-center justify-center">
+                    <button type="submit" class="bg-navyBlue text-beige p-2 rounded">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                        </svg>
+                    </button>
+                </div>
+                <div class="flex items-center justify-center">
+                    <a href="{% url 'survey_statistics' office.id %}" class="btn btn-secondary">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </form>
+
+        <div class="my-2 bg-beige border-2 border-navyBlue rounded-lg p-5 flex flex-col"> 
+            <div class="flex mb-2 justify-between items-center">
+                <p class="text-navyBlue text-xl font-bold">Data</p>
+        
+                <form method="GET" action="{% url 'export_filtered_data' %}">
+                    <input type="hidden" name="service" value="{{ request.GET.service }}">
+                    <input type="hidden" name="start_date" value="{{ request.GET.start_date }}">
+                    <input type="hidden" name="end_date" value="{{ request.GET.end_date }}">
+                    <input type="hidden" name="export" value="excel">
+                    <button type="submit" class="bg-navyBlue rounded-full w-fit text-beige p-2">Export</button>
+                </form>
+                
+            </div>
+            <div class="overflow-y-auto border-2 border-navyBlue">
+                <table class="min-w-full ">
+                    <thead>
+                        <tr class="bg-navyBlue text-beige">
+                            <th class="border px-4 py-2">Name</th>
+                            <th class="border px-4 py-2">Contact Number</th>
+                            <th class="border px-4 py-2">Email</th>
+                            <th class="border px-4 py-2">Client Type</th>
+                            <th class="border px-4 py-2">Date</th>
+                            <th class="border px-4 py-2">Sex</th>
+                            <th class="border px-4 py-2">Age</th>
+                            <th class="border px-4 py-2">Region</th>
+                            <th class="border px-4 py-2">Suggestions</th>
+                            <th class="border px-4 py-2">CC1</th>
+                            <th class="border px-4 py-2">CC2</th>
+                            <th class="border px-4 py-2">CC3</th>
+                            <th class="border px-4 py-2">sqd0</th>
+                            <th class="border px-4 py-2">sqd1</th>
+                            <th class="border px-4 py-2">sqd2</th>
+                            <th class="border px-4 py-2">sqd3</th>
+                            <th class="border px-4 py-2">sqd4</th>
+                            <th class="border px-4 py-2">sqd5</th>
+                            <th class="border px-4 py-2">sqd6</th>
+                            <th class="border px-4 py-2">sqd7</th>
+                            <th class="border px-4 py-2">sqd8</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for survey in surveys %}
+                        <tr class="border-2 whitespace-nowrap odd:bg-navyLightestBlue">
+                            <td class="border px-4 py-2">{{ survey.name }}</td>
+                            <td class="border px-4 py-2">{{ survey.contact_number }}</td>
+                            <td class="border px-4 py-2">{{ survey.email }}</td>
+                            <td class="border px-4 py-2">{{ survey.get_client_type_display }}</td>
+                            <td class="border px-4 py-2 ">{{ survey.date }}</td>
+                            <td class="border px-4 py-2">{{ survey.get_sex_display }}</td>
+                            <td class="border px-4 py-2">{{ survey.age }}</td>
+                            <td class="border px-4 py-2">{{ survey.region }}</td>
+                            <td class="border px-4 py-2">{{ survey.suggestions }}</td>
+                            <td class="border px-4 py-2">{{ survey.cc1 }}</td>
+                            <td class="border px-4 py-2">{{ survey.cc2 }}</td>
+                            <td class="border px-4 py-2">{{ survey.cc3 }}</td>
+                            <td class="border px-4 py-2">{{ survey.sqd0 }}</td>
+                            <td class="border px-4 py-2">{{ survey.sqd1 }}</td>
+                            <td class="border px-4 py-2">{{ survey.sqd2 }}</td>
+                            <td class="border px-4 py-2">{{ survey.sqd3 }}</td>
+                            <td class="border px-4 py-2">{{ survey.sqd4 }}</td>
+                            <td class="border px-4 py-2">{{ survey.sqd5 }}</td>
+                            <td class="border px-4 py-2">{{ survey.sqd6 }}</td>
+                            <td class="border px-4 py-2">{{ survey.sqd7 }}</td>
+                            <td class="border px-4 py-2">{{ survey.sqd8 }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="20" class="border px-4 py-2 text-center">No surveys available.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+            </div>
+
+            <div class="flex justify-center mt-4">
+                <nav class="bg-beige px-4 py-3 rounded-md shadow-lg">
+                    <ul class="inline-flex space-x-1">
+                        <li>
+                            {% if surveys.has_previous %}
+                                <a href="?page={{ surveys.previous_page_number }}&search={{ search_query }}&service={{ selected_service }}&start_date={{ request.GET.start_date }}&end_date={{ request.GET.end_date }}"
+                                   class="flex px-1 py-1 bg-navyBlue text-white rounded-md">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+                                    </svg>
+                                </a>
+                            {% else %}
+                                <button class="flex px-1 py-1 bg-gray-400 text-white rounded-md cursor-not-allowed" disabled>
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+                                    </svg>
+                                </button>
+                            {% endif %}
+                        </li>
+                        
+                        {% for num in surveys.paginator.page_range %}
+                            {% if surveys.number == num %}
+                                <li>
+                                    <span class="flex px-3 py-1 bg-navyBlue text-white rounded-md">{{ num }}</span>
+                                </li>
+                            {% else %}
+                                <li>
+                                    <a href="?page={{ num }}&search={{ search_query }}&service={{ selected_service }}&start_date={{ request.GET.start_date }}&end_date={{ request.GET.end_date }}" class="flex px-3 py-1 bg-gray-300 text-navyBlue rounded-md">{{ num }}</a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+            
+                        <li>
+                            {% if surveys.has_next %}
+                                <a href="?page={{ surveys.next_page_number }}&search={{ search_query }}&service={{ selected_service }}&start_date={{ request.GET.start_date }}&end_date={{ request.GET.end_date }}"
+                                   class="flex px-1 py-1 bg-navyBlue text-white rounded-md">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                                    </svg>
+                                </a>
+                            {% else %}
+                                <button class="flex px-1 py-1 bg-gray-400 text-white rounded-md cursor-not-allowed" disabled>
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                                    </svg>
+                                </button>
+                            {% endif %}
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 my-2">
+            <div class="bg-beige border-2 border-navyBlue rounded-lg p-6 shadow-lg">
+                <h2 class="text-xl font-bold text-navyBlue mb-4">Scale Question Averages</h2>
+                <canvas id="scaleQuestionChart" class="w-full h-64"></canvas>
+            </div>
+            <div class="bg-beige border-2 border-navyBlue rounded-lg p-6 shadow-lg">
+                <h2 class="text-xl font-bold text-navyBlue mb-4">Client Type Distribution</h2>
+                <canvas id="clientTypeChart" class="w-full h-64"></canvas>
+            </div>
+    
+            <div class="bg-beige border-2 border-navyBlue rounded-lg p-6 shadow-lg">
+                <h2 class="text-xl font-bold text-navyBlue mb-4">Gender</h2>
+                <canvas id="genderChart" class="w-full h-64"></canvas>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 my-2">
+            <div class="bg-beige border-2 border-navyBlue rounded-lg p-6 shadow-lg">
+                <h2 class="text-xl font-bold text-navyBlue mb-4">Overall Clients</h2>
+                <canvas id="scaleQuestionChart" class="w-full h-64"></canvas>
+            </div>
+            <div class="bg-beige border-2 border-navyBlue rounded-lg p-6 shadow-lg">
+                <h2 class="text-xl font-bold text-navyBlue mb-4">Client Type Distribution</h2>
+                <canvas id="clientTypeChart" class="w-full h-64"></canvas>
+            </div>
+    
+            <div class="bg-beige border-2 border-navyBlue rounded-lg p-6 shadow-lg">
+                <h2 class="text-xl font-bold text-navyBlue mb-4">Gender</h2>
+                <canvas id="genderChart" class="w-full h-64"></canvas>
+            </div>
+        </div>
+
+
+
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const scaleQuestionData = {
+        labels: ['Scale Question 1', 'Scale Question 2', 'Scale Question 3', 'Scale Question 4', 'Scale Question 5', 'Scale Question 6', 'Scale Question 7', 'Scale Question 8'],
+        datasets: [{
+            label: 'Average Score',
+            data: [
+                {{ statistics.avg_sqd0|default:"0" }},
+                {{ statistics.avg_sqd1|default:"0" }},
+                {{ statistics.avg_sqd2|default:"0" }},
+                {{ statistics.avg_sqd3|default:"0" }},
+                {{ statistics.avg_sqd4|default:"0" }},
+                {{ statistics.avg_sqd5|default:"0" }},
+                {{ statistics.avg_sqd6|default:"0" }},
+                {{ statistics.avg_sqd7|default:"0" }},
+                {{ statistics.avg_sqd8|default:"0" }}
+            ],
+            backgroundColor: 'rgba(54, 162, 235, 0.5)',
+            borderColor: 'rgba(54, 162, 235, 1)',
+            borderWidth: 1
+        }]
+    };
+
+    const scaleConfig = {
+        type: 'bar',
+        data: scaleQuestionData,
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 5
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    };
+
+    const scaleQuestionChart = new Chart(
+        document.getElementById('scaleQuestionChart'),
+        scaleConfig
+    );
+
+    const clientTypeData = {
+        labels: [
+            {% for client_type in client_type_stats %}
+                "{{ client_type.client_type }}",
+            {% endfor %}
+        ],
+        datasets: [{
+            label: 'Client Type Count',
+            data: [
+                {% for client_type in client_type_stats %}
+                    {{ client_type.count }},
+                {% endfor %}
+            ],
+            backgroundColor: 'rgba(75, 192, 192, 0.5)',
+            borderColor: 'rgba(75, 192, 192, 1)',
+            borderWidth: 1
+        }]
+    };
+
+    const clientTypeConfig = {
+        type: 'bar',
+        data: clientTypeData,
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    };
+
+    const clientTypeChart = new Chart(
+        document.getElementById('clientTypeChart'),
+        clientTypeConfig
+    );
+
+    const genderData = {
+        labels: [
+            {% for sex in sex_stats %}
+                "{{ sex.sex }}",
+            {% endfor %}
+        ],
+        datasets: [{
+            data: [
+                {% for sex in sex_stats %}
+                    {{ sex.count }},
+                {% endfor %}
+            ],
+            backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],   
+            hoverBackgroundColor: ['#FF6384', '#36A2EB', '#FFCE56']
+        }]
+    };
+
+    const genderConfig = {
+        type: 'pie',
+        data: genderData,
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'bottom'
+                }
+            }
+        }
+    };
+
+    const genderChart = new Chart(
+        document.getElementById('genderChart'),
+        genderConfig
+    );
+ 
+</script>
+
+{% endblock %}

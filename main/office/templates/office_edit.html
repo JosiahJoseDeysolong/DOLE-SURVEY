@@ -1,0 +1,53 @@
+<!-- office_edit.html -->
+{% extends 'layout.html' %}
+
+{% block content %}
+{% include 'office_url.html' %}
+
+<div class="shadow-lg shadow-navyBlue container mx-auto bg-beige bg-opacity-60 w-11/12 rounded-lg my-5 flex">
+    <div class="flex w-full">
+        <div class="flex p-3 rounded-l-lg bg-navyBlue"></div>
+
+        <div class="my-5 w-full">
+            <div class=" mx-5">
+                <div class="bg-gradient-to-r from-navyBlue to-navyLightBlue flex items-center text-2xl rounded-lg text-beige font-bold w-fit p-5">
+                    Edit Division/Office/Unit
+                </div>
+
+                <form method="POST">
+                    {% csrf_token %}
+                    <h1 class="font-bold text-medium text-navyBlue my-2">{{ form.office_name.label }}</h1>
+                    {{ form.office_name }}
+                    {% if form.office_name.errors %}
+                        <ul class="text-red-500 font-bold text-sm text-right mt-2">
+                            {% for error in form.office_name.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+
+                    <h1 class="font-bold text-medium text-navyBlue my-2">{{ form.office_description.label }}</h1>
+                    {{ form.office_description }}
+                    {% if form.office_description.errors %}
+                        <ul class="text-red-500 font-bold text-sm text-right mt-2">
+                            {% for error in form.office_description.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+
+                    <div class="bg-navyLightBlue border-2 border-navyBlue rounded-lg mb-10 flex">
+                        <input class="bg-navyBlue border-2 py-2 px-8 rounded-full m-5 text-bold text-beige border-navyBlue cursor-pointer hover:text-navyBlue hover:bg-navyLighterBlue" 
+                               type="submit" value="UPDATE">
+                        <a href="{% url 'office_list' %}" 
+                           class="bg-beige border-2 py-2 px-8 rounded-full my-5 text-bold text-navyBlue border-navyBlue cursor-pointer hover:bg-navyLighterBlue hover:text-beige">
+                            CANCEL
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,72 @@
+<!-- user_url -->
+
+<div class="container w-11/12 mx-auto mt-5 flex">
+<!-- back button -->
+<a href="javascript:history.back()" id="backButton" class="rounded-full p-1.5 border-2 border-navyBlue bg-navyBlue text-beige hover:bg-beige hover:border-navyblue hover:text-navyBlue me-5 transition duration-200">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3" />
+    </svg>
+</a>
+
+
+    <!-- user list button -->
+    {% if '/offices' in request.path %}
+    <a href="{% url 'office_list' %}" class="bg-beige font-bold text-navyBlue border-2 border-navyBlue p-1.5 rounded-lg w-fit hover:bg-navyBlue hover:border-navyblue hover:text-beige  transition duration-200">
+        Office List
+    </a>
+    {% endif %}
+
+    <!-- create office button -->
+    {% if '/offices/create' in request.path %}
+    <div  class="font-bold text-navyBlue  rounded-lg w-fit flex">
+        <div  class="font-bold text-navyBlue py-1.5 rounded-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+            </svg>  
+        </div>
+        <a href="{% url 'office_create' %}"  class="bg-beige font-bold text-navyBlue border-2 border-navyBlue p-1.5 rounded-lg w-fit hover:bg-navyBlue hover:border-navyblue hover:text-beige  transition duration-200">
+            Create Office
+        </a>
+    </div>
+    {% endif %}
+
+    <!-- edit office button -->
+    {% if '/offices/edit' in request.path %}
+    <div  class="font-bold text-navyBlue  rounded-lg w-fit flex">
+        <div  class="font-bold text-navyBlue py-1.5 rounded-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+            </svg>  
+        </div>
+        <div class="bg-beige font-bold text-navyBlue border-2 border-navyBlue p-1.5 rounded-lg w-fit hover:bg-navyBlue hover:border-navyblue hover:text-beige  transition duration-200">
+            Edit Office
+        </div>
+    </div>
+    {% endif %}
+
+       <!-- edit office button -->
+       {% if '/offices/services' in request.path %}
+       <div  class="font-bold text-navyBlue  rounded-lg w-fit flex">
+           <div  class="font-bold text-navyBlue py-1.5 rounded-lg">
+               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                   <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+               </svg>  
+           </div>
+           <div class="bg-beige font-bold text-navyBlue border-2 border-navyBlue p-1.5 rounded-lg w-fit hover:bg-navyBlue hover:border-navyblue hover:text-beige  transition duration-200">
+               Services
+           </div>
+       </div>
+       {% endif %}
+
+
+</div>
+
+
+<script>
+    // Check if the current URL is '/offices/'
+    if (window.location.pathname === '/offices/') {
+        // Disable the back button
+        document.getElementById('backButton').removeAttribute('href');
+        document.getElementById('backButton').classList.add('cursor-not-allowed', 'opacity-80');
+    }
+  </script>
