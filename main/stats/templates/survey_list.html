@@ -1,13 +1,13 @@
-<!-- survey_list.html -->
 {% extends 'layout.html' %}
 {% block title %}
     Statistics
 {% endblock %}
-
+{% block center_content %}
+{% endblock %}
 {% block content %}
 {% include 'stats_url.html'%}
 
-<div class="container mx-auto h-full w-11/12 my-2 rounded-lg bg-gradient-to-r from-navyLighterBlue to-navyBlue flex">
+<div class="container mx-auto h-full my-2 rounded-lg bg-gradient-to-r from-navyLighterBlue to-navyBlue flex">
     <div class="bg-navyBlue rounded-l-lg p-4"></div> <div> 
         <div class="m-5">
             <div class="flex justify-left items-center text-2xl font-bold">
@@ -16,39 +16,38 @@
                 </div>
                 <div class="p-4 rounded-r-lg bg-navyBlue text-beige">
                     Statistics
-            
                 </div>
             </div>
             
-     
+            {% if user.is_superuser or user.profile.role == 'admin' or user.profile.role == 'hr' or user.profile.office == office %}
+            <a href="{% url 'survey_consolidated' %}" title="View Consolidated Reports" 
+                class="font-bold text-xl mt-4 w-fit border-2 border-beige flex p-3 rounded-full bg-beige text-navyBlue hover:text-beige hover:bg-navyLightBlue transition duration-200">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 14.25v2.25m3-4.5v4.5m3-6.75v6.75m3-9v9M6 20.25h12A2.25 2.25 0 0 0 20.25 18V6A2.25 2.25 0 0 0 18 3.75H6A2.25 2.25 0 0 0 3.75 6v12A2.25 2.25 0 0 0 6 20.25Z" />
+                </svg>
+                <span>View Consolidated Reports</span>
+            </a>
+            {% endif %}
+
                 {% for office in offices %}
                 <div class="drop-shadow-2xl bg-beige rounded-lg shadow-lg flex w-full p-4 my-4 mx-auto">
                     <div class="w-full">
-                        <h2 class="text-2xl font-bold text-navyBlue">{{ office.office_name }} </h2>
-                        <p class="text-sm text-gray-700">{{ office.office_description }}</p>
-
-                        
+                        <h2 class="text-xl font-bold text-navyBlue">{{ office.office_name }} </h2>
+                        <p class="text-lg text-navyBlue">{{ office.office_description }}</p>
                         <div class="flex w-1/2 mt-4">
-                            {% if user.is_superuser or user.profile.office == office %}
-                        <a href="{% url 'survey_statistics' office.id %}" title="View Statistics" 
-                            class="border-2 border-navyBlue flex p-2 rounded-full bg-navyBlue text-beige hover:text-navyBlue hover:bg-beige transition duration-200">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 14.25v2.25m3-4.5v4.5m3-6.75v6.75m3-9v9M6 20.25h12A2.25 2.25 0 0 0 20.25 18V6A2.25 2.25 0 0 0 18 3.75H6A2.25 2.25 0 0 0 3.75 6v12A2.25 2.25 0 0 0 6 20.25Z" />
-                            </svg>
-                            <span>View Statistics</span>
-                        </a>
-                        {% endif %}
+                            {% if user.is_superuser or user.profile.role == 'admin' or user.profile.role == 'hr' or user.profile.office == office %}
+                            <a href="{% url 'survey_statistics' office.id %}" title="View Statistics" 
+                                class="border-2 border-navyBlue flex p-2 rounded-full bg-navyBlue text-beige hover:text-navyBlue hover:bg-beige transition duration-200">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 14.25v2.25m3-4.5v4.5m3-6.75v6.75m3-9v9M6 20.25h12A2.25 2.25 0 0 0 20.25 18V6A2.25 2.25 0 0 0 18 3.75H6A2.25 2.25 0 0 0 3.75 6v12A2.25 2.25 0 0 0 6 20.25Z" />
+                                </svg>
+                                <span>View Statistics</span>
+                            </a>
+                            {% endif %}
+                        </div>
                     </div>
-                    </div>
-
-    
-                    
-                    
-
-
                 </div>
                 {% endfor %}
-          
         </div>
     </div>
     

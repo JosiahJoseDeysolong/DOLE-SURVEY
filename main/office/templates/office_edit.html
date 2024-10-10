@@ -4,7 +4,7 @@
 {% block content %}
 {% include 'office_url.html' %}
 
-<div class="shadow-lg shadow-navyBlue container mx-auto bg-beige bg-opacity-60 w-11/12 rounded-lg my-5 flex">
+<div class="shadow-lg shadow-navyBlue container mx-auto bg-beige bg-opacity-60 rounded-lg my-5 flex">
     <div class="flex w-full">
         <div class="flex p-3 rounded-l-lg bg-navyBlue"></div>
 
@@ -37,11 +37,12 @@
                     {% endif %}
 
                     <div class="bg-navyLightBlue border-2 border-navyBlue rounded-lg mb-10 flex">
-                        <input class="bg-navyBlue border-2 py-2 px-8 rounded-full m-5 text-bold text-beige border-navyBlue cursor-pointer hover:text-navyBlue hover:bg-navyLighterBlue" 
-                               type="submit" value="UPDATE">
+                        <button type="submit" class="bg-navyBlue text-beige mx-5 border-2 py-2 px-8 rounded-full my-5 text-bold  border-navyBlue cursor-pointer hover:bg-navyLighterBlue hover:text-beige transition duration-200">
+                            Save Changes
+                        </button>
                         <a href="{% url 'office_list' %}" 
-                           class="bg-beige border-2 py-2 px-8 rounded-full my-5 text-bold text-navyBlue border-navyBlue cursor-pointer hover:bg-navyLighterBlue hover:text-beige">
-                            CANCEL
+                           class="bg-beige border-2 py-2 px-8 rounded-full my-5 text-bold text-navyBlue border-navyBlue cursor-pointer hover:bg-navyLighterBlue hover:text-beige transition duration-200">
+                            Cancel
                         </a>
                     </div>
                 </form>

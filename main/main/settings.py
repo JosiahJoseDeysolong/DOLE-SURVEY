@@ -25,7 +25,8 @@ SECRET_KEY = 'django-insecure--5y*7kghf4ytf*ge4ov#y9x&0eb(v^!y=m!bvqnb0m7a9*j=z&
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["10.14.20.43", "127.0.0.1", "192.168.1.185", "192.168.0.102"]
+ALLOWED_HOSTS = ["127.0.0.1", "d0f6-180-193-208-138.ngrok-free.app"]
+CSRF_TRUSTED_ORIGINS = ['https://d0f6-180-193-208-138.ngrok-free.app']
 
 
 # Application definition
@@ -44,6 +45,7 @@ INSTALLED_APPS = [
     'authentication',
     'stats',
     'office',
+    'emails',
 ]
 
 TAILWIND_APP_NAME = 'theme'
@@ -71,7 +73,7 @@ ROOT_URLCONF = 'main.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['templates', 'templatetags',],
+        'DIRS': ['templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -139,3 +141,12 @@ STATICFILES_DIRS = [BASE_DIR / "templates/static"]
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# email smtp
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'apollowebsiteojt@gmail.com'
+EMAIL_HOST_PASSWORD = 'spbs zhvo skfy nawr'
+DEFAULT_FROM_EMAIL = 'apollowebsiteojt@gmail.com'

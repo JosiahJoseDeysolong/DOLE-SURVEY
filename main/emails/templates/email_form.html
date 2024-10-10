@@ -1,0 +1,14 @@
+<!-- templates/emails/email_form.html -->
+<form method="POST">
+    {% csrf_token %}
+    <label for="subject">Subject:</label>
+    <input type="text" name="subject" id="subject" required>
+
+    <label for="message">Message:</label>
+    <textarea name="message" id="message" required></textarea>
+
+    <label for="to_email">Recipient Email:</label>
+    <input type="email" name="to_email" id="to_email" required>
+
+    <button type="submit">Send Email</button>
+</form>

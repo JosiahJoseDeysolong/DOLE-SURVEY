@@ -1,0 +1,11 @@
+<div class="bg-beige border-2 border-navyBlue rounded-lg p-4 my-1">
+    <h1 class="text-bold text-medium text-navyBlue  ">{{ label }}</h1>
+    {{ field }}
+    {% if errors %}
+        <ul class="text-red-500 text-bold text-sm text-right ">
+            {% for error in errors %}
+                <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</div>

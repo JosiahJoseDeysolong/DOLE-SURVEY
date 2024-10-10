@@ -1,4 +1,3 @@
-# forms.py
 from django import forms
 from .models import Survey
 from office.models import Service
@@ -52,11 +51,11 @@ class SurveyForm(forms.ModelForm):
             }),
 
             'client_type': forms.RadioSelect(attrs={
-                'class': beige_input + "cursor-pointer",
+                'class': beige_input,
             }),
 
             'date': forms.DateInput(attrs={
-                'class': beige_input + "cursor-pointer", 'type': "date"
+                'class': beige_input + "", 'type': "date"
             }),
 
             'service': forms.Select(attrs={
@@ -77,43 +76,43 @@ class SurveyForm(forms.ModelForm):
 
 
             'cc1': forms.RadioSelect(attrs={
-                'class': beige_input + "cursor-pointer",
+                'class': beige_input,
             }),
 
             'cc2': forms.RadioSelect(attrs={
-                'class': beige_input + "cursor-pointer",
+                'class': beige_input,
             }),
 
             'cc3': forms.RadioSelect(attrs={
-                'class': beige_input + "cursor-pointer",
+                'class': beige_input,
             }),
 
             'sqd0': forms.RadioSelect(attrs={
-                'class': beige_input + "cursor-pointer",
+                'class': beige_input,
             }),
             'sqd1': forms.RadioSelect(attrs={
-                'class': beige_input + "cursor-pointer",
+                'class': beige_input,
             }),
             'sqd2': forms.RadioSelect(attrs={
-                'class': beige_input + "cursor-pointer",
+                'class': beige_input,
             }),
             'sqd3': forms.RadioSelect(attrs={
-                'class': beige_input + "cursor-pointer",
+                'class': beige_input,
             }),
             'sqd4': forms.RadioSelect(attrs={
-                'class': beige_input + "cursor-pointer",
+                'class': beige_input,
             }),
             'sqd5': forms.RadioSelect(attrs={
-                'class': beige_input + "cursor-pointer",
+                'class': beige_input,
             }),
             'sqd6': forms.RadioSelect(attrs={
-                'class': beige_input + "cursor-pointer",
+                'class': beige_input,
             }),
             'sqd7': forms.RadioSelect(attrs={
-                'class': beige_input + "cursor-pointer",
+                'class': beige_input,
             }),
             'sqd8': forms.RadioSelect(attrs={
-                'class': beige_input + "cursor-pointer",
+                'class': beige_input,
             }),
 
             
@@ -137,14 +136,8 @@ class SurveyForm(forms.ModelForm):
             'sqd8': 'I got what I needed from the government office, or (if denied) denial of request was sufficiently explained to me.',
         }
     
-
-
-
-
     def __init__(self, *args, **kwargs):
-        office_id = kwargs.pop('office_id', None)  # Get office_id from kwargs
+        office_id = kwargs.pop('office_id', None)
         super(SurveyForm, self).__init__(*args, **kwargs)
         if office_id:
-            # Filter services based on the selected office
             self.fields['service'].queryset = Service.objects.filter(office_id=office_id)
-

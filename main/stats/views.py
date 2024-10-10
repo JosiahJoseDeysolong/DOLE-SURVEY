@@ -1,112 +1,54 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from survey.models import Survey
 from office .models import Office, Service
-from django.db.models import Avg, Count
-from django.contrib.auth.decorators import login_required
-import openpyxl
+from django.db.models import Count, Sum, F
 from django.http import HttpResponse
-from openpyxl.utils import get_column_letter
-import csv
 from django.db.models import Q
 from django.core.paginator import Paginator
-import pandas as pd
+from django.db.models import Count
+import csv
+from django.contrib.auth.decorators import login_required, user_passes_test
+from authentication.utils import has_role
+from .forms import SurveyEditForm
 
 @login_required(login_url='login')
+@user_passes_test(lambda user: user.is_superuser or has_role(user, ['admin', 'hr']))
 def export_filtered_data(request):
-    service = request.GET.get('service')
+    office_id = request.GET.get('office_id')
+    service_id = request.GET.get('service')
     start_date = request.GET.get('start_date')
     end_date = request.GET.get('end_date')
-    
-    queryset = Survey.objects.all()
-    
-    if service:
-        queryset = queryset.filter(service_id=service)
-    
-    if start_date and end_date:
-        queryset = queryset.filter(date__range=[start_date, end_date])
+    surveys = Survey.objects.filter(office_id=office_id)
 
-    # Create a DataFrame from the queryset
-    data = [{
-        'Date': survey.date,
-        'Service': survey.service.service_name,
-        'Name': survey.name,
-        'Contact Number': survey.contact_number,
-        'Email': survey.email,
-        'Client Type': survey.client_type,
-        'Gender': survey.sex,
-        'Age': survey.age,
-        'Region': survey.region,
-        'Suggestions': survey.suggestions,
-        'CC1': survey.cc1,
-        'CC2': survey.cc2,
-        'CC3': survey.cc3,
-        'SQD0': survey.sqd0,
-        'SQD1': survey.sqd1,
-        'SQD2': survey.sqd2,
-        'SQD3': survey.sqd3,
-        'SQD4': survey.sqd4,
-        'SQD5': survey.sqd5,
-        'SQD6': survey.sqd6,
-        'SQD7': survey.sqd7,
-        'SQD8': survey.sqd8,
-    } for survey in queryset]
+    if service_id and service_id != "None":
+        surveys = surveys.filter(service_id=service_id)
 
-    df = pd.DataFrame(data)
+    if start_date:
+        surveys = surveys.filter(date__gte=start_date)
 
-    # Create a response object for the Excel file
-    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-    response['Content-Disposition'] = f'attachment; filename="{start_date}_to_{end_date}.xlsx"'
+    if end_date:
+        surveys = surveys.filter(date__lte=end_date)
 
-    # Write the DataFrame to an Excel file
-    with pd.ExcelWriter(response, engine='openpyxl') as writer:
-        df.to_excel(writer, index=False, sheet_name='Surveys')
-
-        # Access the workbook and the worksheet
-        workbook = writer.book
-        worksheet = writer.sheets['Surveys']
-
-        # Adjust the width of the columns
-        column_widths = {
-            'A': 15,  # Date
-            'B': 25,  # Service
-            'C': 20,  # Name
-            'D': 20,  # Contact Number
-            'E': 30,  # Email
-            'F': 15,  # Client Type
-            'G': 10,  # Gender
-            'H': 10,  # Age
-            'I': 20,  # Region
-            'J': 50,  # Suggestions
-            'K': 10,  # CC1
-            'L': 10,  # CC2
-            'M': 10,  # CC3
-            'N': 10,  # SQD0
-            'O': 10,  # SQD1
-            'P': 10,  # SQD2
-            'Q': 10,  # SQD3
-            'R': 10,  # SQD4
-            'S': 10,  # SQD5
-            'T': 10,  # SQD6
-            'U': 10,  # SQD7
-            'V': 10,  # SQD8
-        }
-
-        for column, width in column_widths.items():
-            worksheet.column_dimensions[column].width = width
-
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="filtered_survey_data.csv"'
+    writer = csv.writer(response)
+    writer.writerow(['Name', 'Contact Number', 'Email', 'Client Type', 'Date', 'Sex', 'Age', 'Region', 'Suggestions', 'CC1', 'CC2', 'CC3', 'Sqd0', 'Sqd1', 'Sqd2', 'Sqd3', 'Sqd4', 'Sqd5', 'Sqd6', 'Sqd7', 'Sqd8'])
+    for survey in surveys:
+        writer.writerow([survey.name, survey.contact_number, survey.email, survey.get_client_type_display(),
+                         survey.date, survey.get_sex_display(), survey.age, survey.region, survey.suggestions,
+                         survey.cc1, survey.cc2, survey.cc3, survey.sqd0, survey.sqd1, survey.sqd2, survey.sqd3,
+                         survey.sqd4, survey.sqd5, survey.sqd6, survey.sqd7, survey.sqd8])
     return response
- 
 
 @login_required(login_url='login')
+@user_passes_test(lambda user: user.is_superuser or has_role(user, ['admin', 'hr', 'employee']))
 def survey_statistics(request, office_id):
     office = get_object_or_404(Office, id=office_id)
     services = Service.objects.filter(office=office)
-
     start_date = request.GET.get('start_date')
     end_date = request.GET.get('end_date')
     selected_service = request.GET.get('service')
     search_query = request.GET.get('search', '')
-
     surveys = Survey.objects.filter(office=office)
 
     if start_date and end_date:
@@ -115,7 +57,6 @@ def survey_statistics(request, office_id):
     if selected_service and selected_service != 'None':
         surveys = surveys.filter(service_id=selected_service)
 
-
     if search_query:
         surveys = surveys.filter(
             Q(name__icontains=search_query) |
@@ -123,23 +64,28 @@ def survey_statistics(request, office_id):
             Q(contact_number__icontains=search_query)
         )
 
-    paginator = Paginator(surveys.order_by('id'), 20)
+    paginator = Paginator(surveys.order_by('id'), 10)
     page_number = request.GET.get('page')
     page_surveys = paginator.get_page(page_number)
+    total_surveys_count = surveys.count()
+    total_score = surveys.aggregate(
+        total_sqd=Sum(F('sqd0') + F('sqd1') + F('sqd2') + F('sqd3') + 
+                       F('sqd4') + F('sqd5') + F('sqd6') + F('sqd7') + F('sqd8'))
+    )['total_sqd'] or 0
 
-    statistics = surveys.aggregate(
-        avg_sqd0=Avg('sqd0'),
-        avg_sqd1=Avg('sqd1'),
-        avg_sqd2=Avg('sqd2'),
-    )
-
+    average_score = total_score / (total_surveys_count * 9) if total_surveys_count > 0 else 0
+    average_score = round(average_score, 2)
+    percentage_score = (average_score / 5) * 100
+    percentage_score = round(percentage_score, 2)
     client_type_stats = surveys.values('client_type').annotate(count=Count('client_type'))
     sex_stats = surveys.values('sex').annotate(count=Count('sex'))
 
     context = {
         'office': office,
         'surveys': page_surveys,  
-        'statistics': statistics,
+        'total_surveys_count': total_surveys_count,
+        'average_score': average_score,
+        'percentage_score': percentage_score,
         'client_type_stats': client_type_stats,
         'sex_stats': sex_stats,
         'services': services,
@@ -147,13 +93,107 @@ def survey_statistics(request, office_id):
         'paginator': paginator,
         'search_query': search_query,
     }
+
     return render(request, 'survey_statistics.html', context)
 
 
 @login_required(login_url='login')
+@user_passes_test(lambda user: user.is_superuser or has_role(user, ['admin']))
+def survey_item_edit(request, survey_id):
+    survey = get_object_or_404(Survey, id=survey_id)
+    office_id = survey.office.id
+    
+    if request.method == 'POST':
+        form = SurveyEditForm(request.POST, instance=survey)
+        if form.is_valid():
+            form.save()
+            return redirect('survey_statistics', office_id=office_id)
+    else:
+        form = SurveyEditForm(instance=survey)
+    
+    return render(request, 'survey_edit.html', {'form': form, 'survey': survey, 'office_id': office_id})
+
+
+@login_required(login_url='login')
+@user_passes_test(lambda user: user.is_superuser or has_role(user, ['admin']))
+def survey_delete(request, survey_id):
+    survey = get_object_or_404(Survey, id=survey_id)
+    if request.method == 'POST':
+        survey.delete()
+        return redirect('survey_statistics', office_id=survey.office.id)
+    return redirect('survey_statistics', office_id=survey.office.id)
+
+@login_required(login_url='login')
+@user_passes_test(lambda user: user.is_superuser or has_role(user, ['admin', 'hr', 'employee']))
 def survey_list(request):
-    if request.user.is_superuser:
+    if request.user.is_superuser or request.user.profile.role == 'admin' or request.user.profile.role == 'hr':
         offices = Office.objects.all()
     else:
         offices = Office.objects.filter(id=request.user.profile.office.id)
     return render(request, 'survey_list.html', {'offices': offices})
+
+@login_required(login_url='login')
+@user_passes_test(lambda user: user.is_superuser or has_role(user, ['admin', 'hr']))
+def survey_consolidated(request):
+    offices = Office.objects.all()
+    start_date = request.GET.get('start_date')
+    end_date = request.GET.get('end_date')
+    selected_service = request.GET.get('service')
+    office_data = []
+    for office in offices:
+        surveys = Survey.objects.filter(office=office)
+        if start_date and end_date:
+            surveys = surveys.filter(date__range=[start_date, end_date])
+        if selected_service and selected_service != 'None':
+            surveys = surveys.filter(service_id=selected_service)
+        total_surveys_count = surveys.count()
+        total_score = surveys.aggregate(
+            total_sqd=Sum(F('sqd0') + F('sqd1') + F('sqd2') + F('sqd3') +
+                          F('sqd4') + F('sqd5') + F('sqd6') + F('sqd7') + F('sqd8'))
+        )['total_sqd'] or 0
+        average_score = total_score / (total_surveys_count * 9) if total_surveys_count > 0 else 0
+        average_score = round(average_score, 2)
+        percentage_score = (average_score / 5) * 100
+        percentage_score = round(percentage_score, 2)
+        office_data.append({
+            'office': office,
+            'total_surveys_count': total_surveys_count,
+            'average_score': average_score,
+            'percentage_score': percentage_score,
+        })
+    surveys = Survey.objects.all()
+
+    if start_date and end_date:
+        surveys = surveys.filter(date__range=[start_date, end_date])
+
+    if selected_service and selected_service != 'None':
+        surveys = surveys.filter(service_id=selected_service)
+
+    paginator = Paginator(surveys.order_by('id'), 20)
+    page_number = request.GET.get('page')
+    page_surveys = paginator.get_page(page_number)
+    total_surveys_count = surveys.count()
+    total_score = surveys.aggregate(
+        total_sqd=Sum(F('sqd0') + F('sqd1') + F('sqd2') + F('sqd3') +
+                      F('sqd4') + F('sqd5') + F('sqd6') + F('sqd7') + F('sqd8'))
+    )['total_sqd'] or 0
+    average_score = total_score / (total_surveys_count * 9) if total_surveys_count > 0 else 0
+    average_score = round(average_score, 2)
+    percentage_score = (average_score / 5) * 100
+    percentage_score = round(percentage_score, 2)
+    client_type_stats = surveys.values('client_type').annotate(count=Count('client_type'))
+    sex_stats = surveys.values('sex').annotate(count=Count('sex'))
+    context = {
+        'offices': offices,
+        'office_data': office_data,
+        'surveys': page_surveys,
+        'total_surveys_count': total_surveys_count,
+        'average_score': average_score,
+        'percentage_score': percentage_score,
+        'client_type_stats': client_type_stats,
+        'sex_stats': sex_stats,
+        'paginator': paginator,
+    }
+    
+    return render(request, 'survey_consolidated.html', context)
+

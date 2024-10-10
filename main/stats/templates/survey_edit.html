@@ -1,0 +1,76 @@
+<!-- survey_edit.html -->
+{% extends 'layout.html' %}
+
+{% block content %}
+{% include 'stats_url.html'%}
+
+<div class="shadow-lg shadow-navyBlue container mx-auto bg-beige bg-opacity-60 rounded-lg my-5 flex">
+    <div class="flex w-full">
+        <div class="flex p-3 rounded-l-lg bg-navyBlue"></div>
+
+        <div class="my-5 w-full">
+            <div class="mx-5">
+                <div class="bg-gradient-to-r from-navyBlue to-navyLightBlue flex items-center text-2xl rounded-lg text-beige font-bold w-fit p-5">
+                    Edit Survey
+                </div>
+
+                <form method="POST" class="text-navyBlue font-bold">
+                    {% csrf_token %}
+                    <div class="flex flex-row gap-x-4">
+                        <div class="w-full gap-y-1 flex flex-col">
+                            {% include 'edit_form_field.html' with label=form.name.label field=form.name errors=form.name.errors %}
+                            {% include 'edit_form_field.html' with label=form.contact_number.label field=form.contact_number errors=form.contact_number.errors %}
+                            {% include 'edit_form_field.html' with label=form.email.label field=form.email errors=form.email.errors %}
+                            {% include 'edit_form_field.html' with label=form.client_type.label field=form.client_type errors=form.client_type.errors %}
+                            {% include 'edit_form_field.html' with label=form.date.label field=form.date errors=form.date.errors %}
+                        </div>
+                        <div class="w-full gap-y-1 flex flex-col">
+                            {% include 'edit_form_field.html' with label=form.sex.label field=form.sex errors=form.sex.errors %}
+                            {% include 'edit_form_field.html' with label=form.age.label field=form.age errors=form.age.errors %}
+                            {% include 'edit_form_field.html' with label=form.region.label field=form.region errors=form.region.errors %}
+                            {% include 'edit_form_field.html' with label=form.service.label field=form.service errors=form.service.errors %}
+                        </div>
+                    </div>
+
+                    <div class="flex flex-row gap-x-4">
+                        <div class="w-full gap-y-1 flex flex-col">
+                            {% include 'edit_form_field.html' with label=form.cc1.label field=form.cc1 errors=form.cc1.errors %}
+                            {% include 'edit_form_field.html' with label=form.cc3.label field=form.cc3 errors=form.cc3.errors %}
+                        </div>
+                        <div class="w-full gap-y-1 flex flex-col">
+                            {% include 'edit_form_field.html' with label=form.cc2.label field=form.cc2 errors=form.cc2.errors %}
+                        </div>
+                    </div>
+
+                    <div class="flex flex-row gap-x-4">
+
+                        <div class="w-full gap-y-1 flex flex-col">
+                            {% include 'edit_form_field.html' with label=form.sqd0.label field=form.sqd0 errors=form.sqd0.errors %}
+                            {% include 'edit_form_field.html' with label=form.sqd1.label field=form.sqd1 errors=form.sqd1.errors %}
+                            {% include 'edit_form_field.html' with label=form.sqd2.label field=form.sqd2 errors=form.sqd2.errors %}
+                            {% include 'edit_form_field.html' with label=form.sqd3.label field=form.sqd3 errors=form.sqd3.errors %}
+                            {% include 'edit_form_field.html' with label=form.sqd4.label field=form.sqd4 errors=form.sqd4.errors %}
+                        </div>
+
+                        <div class="w-full gap-y-1 flex flex-col">
+                            {% include 'edit_form_field.html' with label=form.sqd5.label field=form.sqd5 errors=form.sqd5.errors %}
+                            {% include 'edit_form_field.html' with label=form.sqd6.label field=form.sqd6 errors=form.sqd6.errors %}
+                            {% include 'edit_form_field.html' with label=form.sqd7.label field=form.sqd7 errors=form.sqd7.errors %}
+                            {% include 'edit_form_field.html' with label=form.sqd8.label field=form.sqd8 errors=form.sqd8.errors %}
+                        </div>
+
+                    </div>
+                    {% include 'edit_form_field.html' with label=form.suggestions.label field=form.suggestions errors=form.suggestions.errors %}
+ 
+                    <div class="bg-navyLightBlue border-2 border-navyBlue rounded-lg p-3 mt-4">
+                        <button type="submit" class="bg-navyBlue hover:bg-navyLighterBlue text-beige py-2 px-4 rounded-full transition duration-200">
+                            Save Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

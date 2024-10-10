@@ -30,7 +30,7 @@ class ServiceForm(forms.ModelForm):
             'service_description': 'Service Description:',
         }
 
-        beige_input = "px-3 py-2 rounded-full "
+        beige_input = "px-3 py-2 rounded-lg "
 
         widgets = {
             'service_name': forms.TextInput(attrs={

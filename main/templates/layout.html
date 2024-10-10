@@ -18,21 +18,19 @@
     </script>
 </head>
 
-<body class="bg-gradient-to-r from-beige to-navyLightestBlue w-full">
+<body class="bg-gradient-to-r from-beige to-navyLightestBlue w-full min-h-screen flex flex-col">
 
     {% include 'navbar.html' %}
 
-    <!-- Loading Spinner -->
     <div id="loading-spinner" class="fixed inset-0 flex justify-center items-center bg-white bg-opacity-75">
         <div class="animate-spin h-12 w-12 border-t-4 border-blue-500 border-solid rounded-full"></div>
     </div>
 
-    <!-- Main Content -->
-    <main id="content" class="min-h-screen opacity-0 transition-opacity duration-500 ease-in-out">
+    <main id="content" class="flex-grow flex flex-col opacity-0 transition-opacity duration-500 ease-in-out w-11/12 mx-auto py-4 {% block center_content %}flex items-center justify-center{% endblock %}">
         {% block content %}
         {% endblock %}
     </main>
-
+   
     {% include 'footer.html' %}
 </body>
 

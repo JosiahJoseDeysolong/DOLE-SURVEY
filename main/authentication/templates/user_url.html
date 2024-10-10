@@ -1,38 +1,32 @@
-<!-- user_url -->
 
-<div class="container w-11/12 mx-auto mt-2 flex">
-<!-- back button -->
-<a href="javascript:history.back()" id="backButton" class="rounded-full p-1.5 border-2 border-navyBlue bg-navyBlue text-beige hover:bg-beige hover:border-navyblue hover:text-navyBlue me-5 transition duration-200">
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3" />
-    </svg>
-</a>
-
-
-    <!-- user list button -->
-    {% if '/auth' in request.path %}
-    <a href="{% url 'user_list' %}" class="bg-beige font-bold text-navyBlue border-2 border-navyBlue p-1.5 rounded-lg w-fit hover:bg-navyBlue hover:border-navyblue hover:text-beige  transition duration-200">
-        User List
+<div class="container mx-auto flex">
+    <a href="{% url 'user_list' %}" id="backButton" class="rounded-full p-1.5 border-2 border-navyBlue bg-navyBlue text-beige hover:bg-beige hover:border-navyblue hover:text-navyBlue me-5 transition duration-200">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3" />
+        </svg>
     </a>
+
+    {% if '/auth' in request.path %}
+    <div class="bg-beige font-bold text-navyBlue border-2 border-navyBlue p-1.5 rounded-lg w-fit hover:bg-navyBlue hover:border-navyblue hover:text-beige  transition duration-200">
+        User List
+    </div>
     {% endif %}
 
-    <!-- create user button -->
     {% if '/auth/create_user' in request.path %}
-    <div  class="font-bold text-navyBlue  rounded-lg w-fit flex">
+    <div  class="font-bold text-navyBlue rounded-lg w-fit flex">
         <div  class="font-bold text-navyBlue py-1.5 rounded-lg">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
                 <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
             </svg>  
         </div>
-        <a href="{% url 'create_user' %}"  class="bg-beige font-bold text-navyBlue border-2 border-navyBlue p-1.5 rounded-lg w-fit hover:bg-navyBlue hover:border-navyblue hover:text-beige  transition duration-200">
+        <div class="bg-beige font-bold text-navyBlue border-2 border-navyBlue p-1.5 rounded-lg w-fit hover:bg-navyBlue hover:border-navyblue hover:text-beige  transition duration-200">
             Create User
-        </a>
+        </div>
     </div>
     {% endif %}
 
-    <!-- edit user button -->
     {% if '/auth/edit_user' in request.path %}
-    <div  class="font-bold text-navyBlue  rounded-lg w-fit flex">
+    <div  class="font-bold text-navyBlue rounded-lg w-fit flex">
         <div  class="font-bold text-navyBlue py-1.5 rounded-lg">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
                 <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
@@ -43,30 +37,11 @@
         </div>
     </div>
     {% endif %}
-
-    <!-- Office list button -->
-    {% if '/stats' in request.path %}
-
-    <div  class="font-bold text-navyBlue  rounded-lg w-fit flex">
-        <div  class="font-bold text-navyBlue py-1.5 rounded-lg">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-            </svg>  
-        </div>
-        <a href="{% url 'user_list' %}"  class="bg-beige font-bold text-navyBlue border-2 border-navyBlue p-1.5 rounded-lg w-fit hover:bg-navyBlue hover:border-navyblue hover:text-beige  transition duration-200">
-            Offices
-        </a>
-    </div>
-    {% endif %}
-
-
 </div>
 
 
 <script>
-    // Check if the current URL is '/auth/users/'
     if (window.location.pathname === '/auth/users/') {
-        // Disable the back button
         document.getElementById('backButton').removeAttribute('href');
         document.getElementById('backButton').classList.add('cursor-not-allowed', 'opacity-80');
     }

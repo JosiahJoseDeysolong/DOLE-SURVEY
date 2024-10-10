@@ -4,115 +4,116 @@
 {% block content %}
 {% include 'user_url.html'%}
 
-<div class="drop-shadow-2xl w-11/12 p-8 mx-auto my-5 rounded-lg bg-gradient-to-r from-navyLightBlue to-navyBlue">
-    <h2 class="text-2xl font-bold text-beige">Edit User</h2>
-    <div class="flex flex-nowrap">
-        <form method="post" class="w-full text-beige flex flex-col space-y-4">
-            {% csrf_token %}
-            
-            <div class="w-full">
-                <!-- Office field -->
-                <div>
-                    <label for="office" class="block text-beige">{{form.office.label}}</label>
-                    {{form.office}}
-                    {% if form.office.errors %}
-                        <ul class="text-red-500 text-sm mt-1">
-                            {% for error in form.office.errors %}
-                                <li>{{ error }}</li>
-                            {% endfor %}
-                        </ul>
-                    {% endif %}
-                </div>
-                
-                <!-- Username field -->
-                <div>
-                    <label for="username" class="block">{{form.username.label}}</label>
-                    {{form.username}}
-                    {% if form.username.errors %}
-                        <ul class="text-red-500 text-sm mt-1">
-                            {% for error in form.username.errors %}
-                                <li>{{ error }}</li>
-                            {% endfor %}
-                        </ul>
-                    {% endif %}
-                </div>
-                
-                <!-- Email field -->
-                <div>
-                    <label for="email" class="block">{{form.email.label}}</label>
-                    {{form.email}}
-                    {% if form.email.errors %}
-                        <ul class="text-red-500 text-sm mt-1">
-                            {% for error in form.email.errors %}
-                                <li>{{ error }}</li>
-                            {% endfor %}
-                        </ul>
-                    {% endif %}
-                </div>
+<div class="shadow-lg shadow-navyBlue container mx-auto bg-beige bg-opacity-60 rounded-lg my-5 flex">
+    <div class="flex w-full">
+        <div class="flex p-3 rounded-l-lg bg-navyBlue"></div>
 
-                <!-- First name field -->
-                <div>
-                    <label for="first_name" class="block">{{form.first_name.label}}</label>
-                    {{form.first_name}}
-                    {% if form.first_name.errors %}
-                        <ul class="text-red-500 text-sm mt-1">
-                            {% for error in form.first_name.errors %}
-                                <li>{{ error }}</li>
-                            {% endfor %}
-                        </ul>
-                    {% endif %}
-                </div>
-
-                <!-- Last name field -->
-                <div>
-                    <label for="last_name" class="block">{{form.last_name.label}}</label>
-                    {{form.last_name}}
-                    {% if form.last_name.errors %}
-                        <ul class="text-red-500 text-sm mt-1">
-                            {% for error in form.last_name.errors %}
-                                <li>{{ error }}</li>
-                            {% endfor %}
-                        </ul>
-                    {% endif %}
-                </div>
-
-                <!-- Password1 field -->
-                <div>
-                    <label for="password1" class="block">{{form.password1.label}}</label>
-                    {{form.password1}}
-                    {% if form.password1.errors %}
-                        <ul class="text-red-500 text-sm mt-1">
-                            {% for error in form.password1.errors %}
-                                <li>{{ error }}</li>
-                            {% endfor %}
-                        </ul>
-                    {% endif %}
-                </div>
-
-                <!-- Password2 field -->
-                <div>
-                    <label for="password2" class="block">{{form.password2.label}}</label>
-                    {{form.password2}}
-                    {% if form.password2.errors %}
-                        <ul class="font-bold text-red-500 text-sm mt-1">
-                            {% for error in form.password2.errors %}
-                                <li>{{ error }}</li>
-                            {% endfor %}
-                        </ul>
-                    {% endif %}
-                </div>
-
-                <!-- Submit button -->
-                <button type="submit" class="mt-2 w-1/4 border-navyBlue border-2 p-2 rounded-full bg-beige text-navyBlue hover:bg-navyBlue hover:text-beige transition duration-200">
+        <div class="my-5 w-full">
+            <div class=" mx-5">
+                <div class="bg-gradient-to-r from-navyBlue to-navyLightBlue flex items-center text-2xl rounded-lg text-beige font-bold w-fit p-5">
                     Edit User
-                </button>
-            </div>
+                </div>
 
+                <form method="POST" class="text-navyBlue font-bold">
+                    {% csrf_token %}
+                    <div class="flex flex-row gap-x-4">
+                        <div class="w-full gap-y-1 flex flex-col">  
+                            <label for="office">{{form.office.label}}</label>
+                            <div class="w-fit">{{form.office}}</div>
+                            {% if form.office.errors %}
+                                <ul class="text-red-500 text-sm mt-1">
+                                    {% for error in form.office.errors %}
+                                        <li>{{ error }}</li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
             
-        </form>
-        <div class="w-1/2 bg-beige rounded-xl mx-2">
+                            <label for="username">{{form.username.label}}</label>
+                            {{form.username}}
+                            {% if form.username.errors %}
+                                <ul class="text-red-500 text-sm mt-1">
+                                    {% for error in form.username.errors %}
+                                        <li>{{ error }}</li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+
+                            <label for="password1">{{form.password1.label}}</label>
+                            {{form.password1}}
+                            {% if form.password1.errors %}
+                                <ul class="text-red-500 text-sm mt-1">
+                                    {% for error in form.password1.errors %}
+                                        <li>{{ error }}</li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+
+                            <label for="password2">{{form.password2.label}}</label>
+                            {{form.password2}}
+                            {% if form.password2.errors %}
+                                <ul class="text-red-500 text-sm mt-1">
+                                    {% for error in form.password2.errors %}
+                                        <li>{{ error }}</li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+                        </div>
+                        <div class="w-full gap-y-1 flex flex-col">
+                            <label for="role">{{form.role.label}}</label>
+                            {{form.role}}
+                            {% if form.role.errors %}
+                                <ul class="text-red-500 text-sm mt-1">
+                                    {% for error in form.role.errors %}
+                                        <li>{{ error }}</li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+
+                            <label for="email">{{form.email.label}}</label>
+                            {{form.email}}
+                            {% if form.email.errors %}
+                                <ul class="text-red-500 text-sm mt-1">
+                                    {% for error in form.email.errors %}
+                                        <li>{{ error }}</li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+
+                            <label for="first_name">{{form.first_name.label}}</label>
+                            {{form.first_name}}
+                            {% if form.first_name.errors %}
+                                <ul class="text-red-500 text-sm mt-1">
+                                    {% for error in form.first_name.errors %}
+                                        <li>{{ error }}</li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+
+                            <label for="last_name">{{form.last_name.label}}</label>
+                            {{form.last_name}}
+                            {% if form.last_name.errors %}
+                                <ul class="text-red-500 text-sm mt-1">
+                                    {% for error in form.last_name.errors %}
+                                        <li>{{ error }}</li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+                        </div>
+
+
+                    </div>
+                    <div class="bg-navyLightBlue border-2 border-navyBlue rounded-lg my-3 flex p-3 gap-x-2">
+                        <button type="submit" class="bg-navyBlue hover:bg-navyLighterBlue text-beige py-2 px-4 rounded-full transition duration-200">
+                            Save Changes
+                        </button>
+                    </div>
+                </form> 
+            </div>
  
-        </div> 
+        </div>
     </div>
 </div>
+
+ 
+
 {% endblock %}

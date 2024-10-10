@@ -1,128 +1,123 @@
-{% extends 'layout.html' %}
 
+{% extends 'layout.html' %}
+{% block center_content %}
+{% endblock %}
 {% block content %}
 {% include 'office_url.html' %}
 
-<div class="shadow-lg shadow-navyBlue container mx-auto bg-beige bg-opacity-60 w-11/12 rounded-lg my-5 flex">
+<div class="shadow-lg shadow-navyBlue container mx-auto bg-beige bg-opacity-60 rounded-lg my-5 flex">
     <div class="flex w-full">
         <div class="flex p-3 rounded-l-lg bg-navyBlue"></div>
         <div class="my-5 mx-5">
-            <div class="lg:flex">
-                <div class="bg-gradient-to-r from-navyBlue to-navyLightBlue flex items-center text-2xl rounded-lg text-beige font-bold w-fit p-5">
-                    Services {{ office.office_name }}
+            <div>
+                <div class="lg:flex">
+                    <div class="bg-gradient-to-r from-navyBlue to-navyLightBlue flex items-center text-2xl rounded-lg text-beige font-bold w-fit p-5">
+                        {{ office.office_name }}
+                    </div>
+
+                    <div class="flex my-2 lg:m-5">
+                        <button type="button" onclick="openCreateModal()" class="border-2 border-navyBlue flex p-2 rounded-lg bg-navyBlue text-beige hover:text-navyBlue hover:bg-beige transition duration-200">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                            </svg>
+                        </button>
+                    </div>
                 </div>
 
-                <!-- Trigger Button for Create Modal -->
-                <div class="flex my-2 lg:m-5">
-                    <button onclick="openCreateModal()" class="p-2 border-2 rounded-lg border-navyBlue bg-beige text-navyBlue hover:bg-navyBlue hover:text-beige transition duration-200">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                        </svg>
-                    </button>
+
+                <div class="drop-shadow-xl shadow-lg bg-gradient-to-r from-navyLightestBlue to-beige flex items-center text-xl rounded-lg text-navyBlue font-bold w-fit p-5 mt-4">
+                    List of Services
                 </div>
 
-                <!-- Create Service Modal -->
-                <div id="createModal" class="fixed inset-0 flex items-center justify-center hidden bg-black bg-opacity-50 z-50">
-                    <div class="bg-beige p-5 rounded-lg shadow-lg">
-                        <h2 class="text-xl font-bold mb-4">Create Service</h2>
+                <div id="createModal" class="fixed inset-0 flex items-center justify-center hidden bg-black bg-opacity-50 z-50 transition-opacity duration-300 ease-out opacity-0">
+                    <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity duration-300 ease-out" onclick="closeCreateModal()"></div>
+                    <div class="bg-beige p-5 rounded-lg shadow-lg transform transition-transform duration-300 ease-out scale-95  w-1/2 max-w-xl h-auto max-h-[90vh] overflow-y-auto">
+                        <h2 class="text-xl font-bold mb-4 text-navyBlue">Create Service</h2>
                         <form method="POST" action="{% url 'office_create_service' office.id %}">
                             {% csrf_token %}
-                            {{ form.as_p }}
+
+                            <div class="my-2">
+                                <h1 class="font-bold text-navyBlue">
+                                    {{ form.service_name.label}}
+                                </h1>
+
+                            {{ form.service_name }}
+                            </div>
+
+                            <div class="my-2">
+                                <h1 class="font-bold text-navyBlue">
+                                    {{ form.service_description.label}}
+                                </h1>
+
+                            {{ form.service_description }}
+                            </div>
+
+
                             <div class="flex justify-end gap-3 mt-4">
-                                <button type="button" onclick="closeCreateModal()" class="px-4 py-2 bg-gray-300 rounded">Cancel</button>
-                                <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded">Create</button>
+                                <button type="button" onclick="closeCreateModal()" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400 transition duration-200">Cancel</button>
+                                <button type="submit" class="px-4 py-2 bg-navyBlue text-beige rounded hover:bg-navyLightBlue">Create</button>
                             </div>
                         </form>
                     </div>
                 </div>
- 
-                
             </div>
 
             {% for service in services %}
-            <div class="drop-shadow-2xl bg-beige rounded-lg p-4 shadow-lg my-4 flex w-full">
+            <div class="drop-shadow-xl bg-beige rounded-lg p-4 shadow-lg my-4 flex w-full">
                 <div class="w-full">
-                    <h2 class="text-2xl font-bold text-navyBlue">{{ service.service_name }}</h2>
-                    <p class="text-sm text-gray-700">{{ service.service_description }}</p>
+                    <h2 class="text-xl font-bold text-navyBlue">{{ service.service_name }}</h2>
+                    <p class="text-lg text-navyBlue">{{ service.service_description }}</p>
                     <div class="lg:flex gap-x-2">
-
-                        <!-- Edit Service Button -->
                         <div class="flex w-fit mt-4">
-                            <button type="button" onclick="openEditModal('{{ service.id }}', '{{ service.service_name }}', '{{ service.service_description }}')" class="border-2 border-navyBlue flex p-2 rounded-full bg-navyBlue text-beige">
+                            <button type="button" onclick="openEditModal('{{ service.id }}', '{{ service.service_name }}', '{{ service.service_description }}')" class="even:bg-beige even:text-navyBlue inline-flex border-2 border-navyBlue flex p-2 rounded-lg bg-navyBlue text-beige hover:text-navyBlue hover:bg-beige transition duration-200">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
                                 </svg>
-                                <span>Edit</span>
                             </button>
                         </div>
-
-                        <!-- Delete Service Button -->
                         <div class="flex w-fit mt-4">
-                            <button type="button" onclick="openModal('{{ service.id }}')" class="border-2 border-red-600 flex p-2 rounded-full bg-red-600 text-beige hover:text-red-600 hover:bg-beige transition duration-200">
+                            <button type="button" onclick="openDeleteModal('{{ service.id }}')" class="border-2 border-red-600 flex p-2 rounded-full bg-red-600 text-beige hover:text-red-600 hover:bg-beige transition duration-200">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
                                 </svg>
                             </button>
                         </div>
-
-     
-
                     </div>
-
-
-
-
-
-                    
                 </div>
             </div>
 
-
-
-
-
-                   <!-- Delete Confirmation Modal -->
-                   <div id="modal-{{ service.id }}" class="fixed inset-0 flex items-center justify-center hidden bg-black bg-opacity-50 z-50">
-                    <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity duration-300 ease-out"></div>
-                    <div class="bg-beige p-6 rounded-lg shadow-lg transform transition-transform duration-300 ease-out scale-95">
-                        <h3 class="text-lg font-bold text-gray-700 mb-4">Confirm Delete</h3>
-                        <p>Are you sure you want to delete this service?</p>
-                        <div class="mt-4 flex justify-end gap-2">
-                            <button type="button" onclick="closeModal('{{ service.id }}')" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400 transition duration-200">Cancel</button>
-                            <form action="{% url 'delete_service' service.id %}" method="POST">
-                                {% csrf_token %}
-                                <button type="submit" class="px-4 py-2 bg-red-600 text-beige rounded hover:bg-red-700 transition duration-200">Delete</button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Edit Service Modal -->
-                <div id="editModal" class="fixed inset-0 flex items-center justify-center hidden bg-black bg-opacity-50 z-50">
-                    <div class="bg-beige p-5 rounded-lg shadow-lg">
-                        <h2 class="text-xl font-bold mb-4">Edit Service</h2>
-                        <form method="POST" action="{% url 'service_edit' service.id %}">
+            <div id="deleteModal-{{ service.id }}" class="fixed inset-0 flex items-center justify-center hidden bg-black bg-opacity-50 z-50 transition-opacity duration-300 ease-out opacity-0">
+                <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity duration-300 ease-out"></div>
+                <div class="bg-beige p-6 rounded-lg shadow-lg transform transition-transform duration-300 ease-out scale-95">
+                    <h3 class="text-lg font-bold text-gray-700 mb-4">Confirm Delete</h3>
+                    <p>Are you sure you want to delete this service?</p>
+                    <div class="mt-4 flex justify-end gap-2">
+                        <button type="button" onclick="closeDeleteModal('{{ service.id }}')" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400 transition duration-200">Cancel</button>
+                        <form action="{% url 'delete_service' service.id %}" method="POST">
                             {% csrf_token %}
-                            <input type="text" name="service_name" id="editServiceName" class="border rounded w-full" required>
-                            <textarea name="service_description" id="editServiceDescription" class="border rounded w-full mt-2" required></textarea>
-                            <div class="flex justify-end gap-3 mt-4">
-                                <button type="button" onclick="closeEditModal()" class="px-4 py-2 bg-gray-300 rounded">Cancel</button>
-                                <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded">Save Changes</button>
-                            </div>
+                            <button type="submit" class="px-4 py-2 bg-red-600 text-beige rounded hover:bg-red-700 transition duration-200">Delete</button>
                         </form>
                     </div>
                 </div>
+            </div>
 
-
-
-
-
-
-
-
-
-
-
+            <div id="editModal-{{ service.id }}" class="fixed inset-0 flex items-center justify-center hidden bg-black bg-opacity-50 z-50 transition-opacity duration-300 ease-out opacity-0">
+                <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity duration-300 ease-out" onclick="closeEditModal('{{ service.id }}')"></div>
+                <div class="bg-beige p-5 rounded-lg shadow-lg transform transition-transform duration-300 ease-out scale-95 w-1/2 max-w-xl h-auto max-h-[90vh] overflow-y-auto">
+                    <h2 class="text-xl text-navyBlue font-bold mb-4">Edit Service</h2>
+                    <form method="POST" action="{% url 'service_edit' service.id %}">
+                        {% csrf_token %}
+                        <h1 class="text-xl text-navyBlue font-bold mb-2">Service Name</h1>
+                        <input type="text" name="service_name" id="editServiceName-{{ service.id }}" class="border rounded w-full" required>
+                        <h1 class="text-xl text-navyBlue font-bold mb-2">Service Description</h1>
+                        <textarea name="service_description" id="editServiceDescription-{{ service.id }}" class="border rounded w-full h-64" required></textarea>
+                        <div class="flex justify-end gap-3 mt-4">
+                            <button type="button" onclick="closeEditModal('{{ service.id }}')" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400 transition duration-200">Cancel</button>
+                            <button type="submit" class="px-4 py-2 bg-navyBlue text-beige hover:bg-navyLightBlue transition duration-200 rounded">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
 
             {% empty %}
                 <p class="my-2 text-gray-500">No services available for this office.</p>
@@ -132,46 +127,53 @@
 </div>
 
 <script>
-    function openCreateModal() {
-        document.getElementById('createModal').classList.remove('hidden');
-    }
-    
-    function closeCreateModal() {
-        document.getElementById('createModal').classList.add('hidden');
-    }
-
-    function openModal(serviceId) {
-        const modal = document.getElementById('modal-' + serviceId);
+    function openModal(modalId) {
+        var modal = document.getElementById(modalId);
         modal.classList.remove('hidden');
-        
-        // Trigger the transition effects for opacity and scale
-        setTimeout(() => {
+        setTimeout(function() {
+            modal.classList.remove('opacity-0');
+            modal.classList.add('opacity-100');
             modal.querySelector('.transform').classList.remove('scale-95');
             modal.querySelector('.transform').classList.add('scale-100');
-        }, 10); // Small delay to allow transition
+        }, 10);
     }
 
-    function closeModal(serviceId) {
-        const modal = document.getElementById('modal-' + serviceId);
-        
-        // Apply reverse transition for hiding the modal
+    function closeModal(modalId) {
+        var modal = document.getElementById(modalId);
+        modal.classList.remove('opacity-100');
+        modal.classList.add('opacity-0');
         modal.querySelector('.transform').classList.add('scale-95');
         modal.querySelector('.transform').classList.remove('scale-100');
-        
-        // Delay hiding to let the transition play out
-        setTimeout(() => {
+        setTimeout(function() {
             modal.classList.add('hidden');
-        }, 300); // Delay matches transition duration
+        }, 300);
+    }
+
+    function openCreateModal() {
+        openModal('createModal');
+    }
+
+    function closeCreateModal() {
+        closeModal('createModal');
+    }
+
+    function openDeleteModal(serviceId) {
+        openModal('deleteModal-' + serviceId);
+    }
+
+    function closeDeleteModal(serviceId) {
+        closeModal('deleteModal-' + serviceId);
     }
 
     function openEditModal(serviceId, serviceName, serviceDescription) {
-        document.getElementById('editServiceName').value = serviceName;
-        document.getElementById('editServiceDescription').value = serviceDescription;
-        document.getElementById('editModal').classList.remove('hidden');
+        document.getElementById('editServiceName-' + serviceId).value = serviceName;
+        document.getElementById('editServiceDescription-' + serviceId).value = serviceDescription;
+        
+        openModal('editModal-' + serviceId);
     }
-
-    function closeEditModal() {
-        document.getElementById('editModal').classList.add('hidden');
+    
+    function closeEditModal(serviceId) {
+        closeModal('editModal-' + serviceId);
     }
 </script>
 

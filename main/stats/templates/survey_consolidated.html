@@ -1,0 +1,90 @@
+<!-- survey_consolidated.html -->
+{% extends 'layout.html' %}
+{% block title %}
+    Statistics
+{% endblock %}
+{% block center_content %}
+{% endblock %}
+{% block content %}
+{% include 'stats_url.html'%}
+
+<div class="container mx-auto h-full my-2 rounded-lg bg-gradient-to-r from-navyLighterBlue to-navyBlue flex">
+    <div class="bg-navyBlue rounded-l-lg p-4"></div>
+
+    <div class="m-5 w-full">
+        <div class="flex justify-left items-center text-2xl font-bold">
+            <div class="p-4 rounded-l-lg bg-beige text-navyBlue">
+                Consolidated
+            </div>
+            <div class="p-4 rounded-r-lg bg-navyBlue text-beige">
+                Reports
+            </div>
+        </div>
+
+        <form class="w-full" method="GET" action="">
+            <div class="bg-beige rounded-lg w-fit text-2xl py-2 font-bold text-navyBlue my-2 border-2 border-navyBlue lg:flex gap-x-2 p-3">
+                <div class="flex items-center justify-center ">Date Within:</div>
+                <input type="date" id="startDate" name="start_date" value="{{ request.GET.start_date }}" class="border rounded p-2">
+                <input type="date" id="endDate" name="end_date" value="{{ request.GET.end_date }}" class="border rounded p-2">
+                <div class="flex items-center justify-center">
+                    <button type="submit" class="bg-navyBlue text-beige p-2 rounded">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                        </svg>
+                    </button>
+                </div>
+                <div class="flex items-center justify-center">
+                    <a href="{% url 'survey_consolidated' %}" class="btn btn-secondary">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </form>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 my-2">
+            <div class="bg-beige border-2 border-navyBlue rounded-lg p-6 shadow-lg">
+                <h2 class="text-2xl font-bold text-navyBlue mb-4">No. Clients Served</h2>
+                <h2 class="w-fit text-4xl font-extrabold bg-gradient-to-r from-navyBlue to-navyLightBlue bg-clip-text text-transparent">
+                    {{total_surveys_count}}
+                </h2>
+            </div>
+            <div class="bg-beige border-2 border-navyBlue rounded-lg p-6 shadow-lg">
+                <h2 class="text-2xl font-bold text-navyBlue mb-4">Overall Score</h2>
+                <h2 class="w-fit text-4xl font-extrabold bg-gradient-to-r from-navyBlue to-navyLightBlue bg-clip-text text-transparent">
+                    {{average_score}}
+                </h2>
+            </div>
+            <div class="bg-beige border-2 border-navyBlue rounded-lg p-6 shadow-lg">
+                <h2 class="text-2xl font-bold text-navyBlue mb-4">Overall Percentage Rating</h2>
+                <h2 class="w-fit text-4xl font-extrabold bg-gradient-to-r from-navyBlue to-navyLightBlue bg-clip-text text-transparent">
+                    {{percentage_score}} %
+                </h2>
+            </div>
+        </div>
+
+        <div class="container mx-auto">
+            {% for data in office_data %}
+                <div class="flex items-center drop-shadow-2xl bg-beige rounded-lg shadow-lg p-4 my-4">
+                    <h2 class="text-xl font-bold text-navyBlue flex-1">{{ data.office.office_name }}</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 flex-1">
+                        <div class="p-2 text-center">
+                            <p class="text-gray-700">Total Surveys:</p>
+                            <p class="font-bold">{{ data.total_surveys_count }}</p>
+                        </div>
+                        <div class="p-2 text-center">
+                            <p class="text-gray-700">Average Score:</p>
+                            <p class="font-bold">{{ data.average_score }}</p>
+                        </div>
+                        <div class="p-2 text-center">
+                            <p class="text-gray-700">Percentage Score:</p>
+                            <p class="font-bold">{{ data.percentage_score }}%</p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

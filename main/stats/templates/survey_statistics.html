@@ -1,22 +1,57 @@
-<!--survey_statistics.html-->
 {% extends 'layout.html' %}
 
 {% block title %}
     Survey Statistics
 {% endblock %}
 
+{% block center_content %}
+{% endblock %}
+
 {% block content %}
 {% include 'stats_url.html'%}
 
-<div class="bg-gradient-to-r from-navyLighterBlue to-navyBlue container mx-auto w-11/12 rounded-lg my-5 flex">
-    <div class="bg-navyBlue rounded-l-lg p-4"></div> 
-    <div class="w-11/12 pt-5 pl-5 pb-5"> 
-        <div class="bg-beige rounded-lg w-fit text-2xl font-bold text-navyBlue mb-4 p-5 border-2 border-navyBlue">Survey Statistics for 
-            {{ office.office_name }}
+<div class="bg-gradient-to-r from-navyLighterBlue to-navyBlue container mx-auto   rounded-lg my-2 flex">
+    <div class="bg-navyBlue rounded-l-lg p-4">
+
+    </div>
+    <div class="w-11/12 pt-5 pl-5 pb-5">
+        <div class="bg-beige rounded-lg w-fit text-2xl font-bold text-navyBlue mb-4 p-5 border-2 border-navyBlue">
+            Survey Statistics for {{ office.office_name }}
         </div>
-    
+
+        <div id="suggestionModal" class="fixed inset-0 flex items-center justify-center hidden bg-black bg-opacity-50 z-50 transition-opacity duration-300 ease-out opacity-0">
+            <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity duration-300 ease-out" onclick="closeSuggestionModal()">
+
+            </div>
+            <div class="text-navyBlue bg-beige p-5 rounded-lg shadow-lg transform transition-transform duration-300 ease-out scale-95 w-1/2 max-w-xl h-auto max-h-[90vh] overflow-y-auto">
+                <h1 id="surveyName" class="text-xl font-bold mb-2"></h1>
+                <h1 id="surveyService" class="text-xl text-navyBlue  mb-2"></h1>
+                <h1 id="surveySuggestions" class="text-lg text-navyBlue mb-2"></h1>
+                <div class="flex justify-end gap-3 mt-4">
+                    <button type="button" onclick="closeSuggestionModal()" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400 transition duration-200">Close</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="deleteSurveyModal" class="fixed inset-0 flex items-center justify-center hidden bg-black bg-opacity-50 z-50 transition-opacity duration-300 ease-out opacity-0">
+            <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity duration-300 ease-out" onclick="closeDeleteSurveyModal()"></div>
+            <div class="bg-beige p-6 rounded-lg shadow-lg transform transition-transform duration-300 ease-out scale-95">
+                <h3 id="deleteSurveyModalTitle" class="text-lg font-bold text-navyBlue mb-4"></h3>
+                <p>Are you sure you want to delete this survey?</p>
+                <div class="mt-4 flex justify-end gap-2">
+                    <button type="button" onclick="closeDeleteSurveyModal()" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400 transition duration-200">Cancel</button>
+                    <form id="deleteSurveyForm" method="POST">
+                        {% csrf_token %}
+                        <button type="submit" class="px-4 py-2 bg-red-600 text-beige rounded hover:bg-red-700 transition duration-200">Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+
+
         <form method="GET" action="{% url 'survey_statistics' office.id %}">
-            <div class="bg-beige rounded-lg w-fit text-2xl font-bold text-navyBlue p-2 border-2 border-navyBlue lg:flex gap-x-2">
+            <div class="w-full pl-5 bg-beige rounded-lg w-fit text-2xl font-bold text-navyBlue p-2 border-2 border-navyBlue lg:flex gap-x-2">
                 <div class="mb-4">
                     <label for="serviceSelect" class="block text-navyBlue">Service:</label>
                     <select id="serviceSelect" name="service" class="border rounded p-2">
@@ -40,7 +75,6 @@
                     <label for="searchQuery" class="block text-navyBlue">Search:</label>
                     <input type="text" id="searchQuery" name="search" value="{{ search_query }}" placeholder="Search by name, email, or contact" class="border rounded p-2">
                 </div>
-        
                 <div class="flex items-center justify-center">
                     <button type="submit" class="bg-navyBlue text-beige p-2 rounded">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
@@ -58,23 +92,29 @@
             </div>
         </form>
 
-        <div class="my-2 bg-beige border-2 border-navyBlue rounded-lg p-5 flex flex-col"> 
+        <div class="my-2 bg-beige  rounded-lg p-5 flex flex-col"> 
             <div class="flex mb-2 justify-between items-center">
-                <p class="text-navyBlue text-xl font-bold">Data</p>
-        
+                <p class="text-navyBlue text-xl font-bold">
+                    Data
+                </p>
                 <form method="GET" action="{% url 'export_filtered_data' %}">
+                    <input type="hidden" name="office_id" value="{{ office.id }}">
                     <input type="hidden" name="service" value="{{ request.GET.service }}">
                     <input type="hidden" name="start_date" value="{{ request.GET.start_date }}">
                     <input type="hidden" name="end_date" value="{{ request.GET.end_date }}">
                     <input type="hidden" name="export" value="excel">
-                    <button type="submit" class="bg-navyBlue rounded-full w-fit text-beige p-2">Export</button>
+                    <button type="submit" class="bg-navyBlue rounded-full w-fit text-beige p-2">
+                        Export
+                    </button>
                 </form>
-                
             </div>
-            <div class="overflow-y-auto border-2 border-navyBlue">
-                <table class="min-w-full ">
+            <div class="overflow-y-auto">
+                <table class="min-w-full">
                     <thead>
                         <tr class="bg-navyBlue text-beige">
+                            {% if user.is_superuser or user.profile.role == 'admin' %}
+                            <th class="border px-4 py-2">Actions</th>
+                            {% endif %}
                             <th class="border px-4 py-2">Name</th>
                             <th class="border px-4 py-2">Contact Number</th>
                             <th class="border px-4 py-2">Email</th>
@@ -100,28 +140,51 @@
                     </thead>
                     <tbody>
                         {% for survey in surveys %}
-                        <tr class="border-2 whitespace-nowrap odd:bg-navyLightestBlue">
+                        <tr class=" whitespace-nowrap odd:bg-navyLightestBlue text-navyBlue">
+                            {% if user.is_superuser or user.profile.role == 'admin' %}
+                            <td class="px-4 flex gap-x-2 my-7">
+                                <a href="{% url 'survey_item_edit' survey.id %}" class="bg-beige inline-flex justify-center items-center border-2 border-navyBlue p-2 rounded-lg bg-navyBlue text-beige hover:text-navyBlue hover:bg-beige transition duration-200">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+                                    </svg>
+                                </a>
+                                
+                                <button type="button" onclick="openDeleteSurveyModal('{{ survey.id }}', '{{ survey.name }}', '{{ survey.service.service_name }}', '{{ survey.suggestions }}')" 
+                                    class="border-2 border-red-600 flex justify-center items-center p-2 rounded-full bg-red-600 text-beige hover:text-red-600 hover:bg-beige transition duration-200">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                                    </svg>
+                                </button>
+                            </td>
+ 
+                            {% endif %}
                             <td class="border px-4 py-2">{{ survey.name }}</td>
                             <td class="border px-4 py-2">{{ survey.contact_number }}</td>
                             <td class="border px-4 py-2">{{ survey.email }}</td>
                             <td class="border px-4 py-2">{{ survey.get_client_type_display }}</td>
-                            <td class="border px-4 py-2 ">{{ survey.date }}</td>
+                            <td class="border px-4 py-2">{{ survey.date }}</td>
                             <td class="border px-4 py-2">{{ survey.get_sex_display }}</td>
                             <td class="border px-4 py-2">{{ survey.age }}</td>
                             <td class="border px-4 py-2">{{ survey.region }}</td>
-                            <td class="border px-4 py-2">{{ survey.suggestions }}</td>
-                            <td class="border px-4 py-2">{{ survey.cc1 }}</td>
+                            <td class="border px-4 py-2">
+                                <div class="flex my-2 lg:m-5">
+                                    <button type="button" onclick="openSuggestionModal('{{ survey.id }}', '{{ survey.name }}', '{{ survey.service.service_name }}', '{{ survey.suggestions }}')" class="p-2 border-2 rounded-lg border-navyBlue bg-beige text-navyBlue hover:bg-navyBlue hover:text-beige transition duration-200">
+                                        open
+                                    </button>
+                                </div>
+                            </td>
+                            <td class="border px-4 py-2">{{ survey.cc1 }}. {{ survey.get_cc1_display }}</td>
                             <td class="border px-4 py-2">{{ survey.cc2 }}</td>
                             <td class="border px-4 py-2">{{ survey.cc3 }}</td>
-                            <td class="border px-4 py-2">{{ survey.sqd0 }}</td>
-                            <td class="border px-4 py-2">{{ survey.sqd1 }}</td>
-                            <td class="border px-4 py-2">{{ survey.sqd2 }}</td>
-                            <td class="border px-4 py-2">{{ survey.sqd3 }}</td>
-                            <td class="border px-4 py-2">{{ survey.sqd4 }}</td>
-                            <td class="border px-4 py-2">{{ survey.sqd5 }}</td>
-                            <td class="border px-4 py-2">{{ survey.sqd6 }}</td>
-                            <td class="border px-4 py-2">{{ survey.sqd7 }}</td>
-                            <td class="border px-4 py-2">{{ survey.sqd8 }}</td>
+                            <td class="border px-4 py-2">{{ survey.get_sqd0_display }}</td>
+                            <td class="border px-4 py-2">{{ survey.get_sqd1_display }}</td>
+                            <td class="border px-4 py-2">{{ survey.get_sqd2_display }}</td>
+                            <td class="border px-4 py-2">{{ survey.get_sqd3_display }}</td>
+                            <td class="border px-4 py-2">{{ survey.get_sqd4_display }}</td>
+                            <td class="border px-4 py-2">{{ survey.get_sqd5_display }}</td>
+                            <td class="border px-4 py-2">{{ survey.get_sqd6_display }}</td>
+                            <td class="border px-4 py-2">{{ survey.get_sqd7_display }}</td>
+                            <td class="border px-4 py-2">{{ survey.get_sqd8_display }}</td>
                         </tr>
                         {% empty %}
                         <tr>
@@ -130,8 +193,9 @@
                         {% endfor %}
                     </tbody>
                 </table>
-
             </div>
+
+
 
             <div class="flex justify-center mt-4">
                 <nav class="bg-beige px-4 py-3 rounded-md shadow-lg">
@@ -184,47 +248,93 @@
                     </ul>
                 </nav>
             </div>
+
         </div>
         
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 my-2">
+            
             <div class="bg-beige border-2 border-navyBlue rounded-lg p-6 shadow-lg">
-                <h2 class="text-xl font-bold text-navyBlue mb-4">Scale Question Averages</h2>
-                <canvas id="scaleQuestionChart" class="w-full h-64"></canvas>
+                <h2 class="text-2xl font-bold text-navyBlue mb-4">No. Clients Served</h2>
+                
+                <h2 class="w-fit text-4xl font-extrabold bg-gradient-to-r from-navyBlue to-navyLightBlue bg-clip-text text-transparent">
+                    {{total_surveys_count}}
+                </h2>
+            </div>
+            
+            
+            <div class="bg-beige border-2 border-navyBlue rounded-lg p-6 shadow-lg">
+                <h2 class="text-2xl font-bold text-navyBlue mb-4">Overall Score</h2>
+                <h2 class="w-fit text-4xl font-extrabold bg-gradient-to-r from-navyBlue to-navyLightBlue bg-clip-text text-transparent">
+                    {{average_score}}
+                </h2>
+     
             </div>
             <div class="bg-beige border-2 border-navyBlue rounded-lg p-6 shadow-lg">
-                <h2 class="text-xl font-bold text-navyBlue mb-4">Client Type Distribution</h2>
+                <h2 class="text-2xl font-bold text-navyBlue mb-4">Overall Percentage Rating</h2>
+                <h2 class="w-fit text-4xl font-extrabold bg-gradient-to-r from-navyBlue to-navyLightBlue bg-clip-text text-transparent">
+                    {{percentage_score}} %
+                </h2>
+            </div>
+            <div class="bg-beige border-2 border-navyBlue rounded-lg p-6 shadow-lg">
+                <h2 class="text-xl font-bold text-navyBlue mb-4">Client Types</h2>
                 <canvas id="clientTypeChart" class="w-full h-64"></canvas>
-            </div>
-    
-            <div class="bg-beige border-2 border-navyBlue rounded-lg p-6 shadow-lg">
-                <h2 class="text-xl font-bold text-navyBlue mb-4">Gender</h2>
-                <canvas id="genderChart" class="w-full h-64"></canvas>
-            </div>
+            </div>  
         </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 my-2">
-            <div class="bg-beige border-2 border-navyBlue rounded-lg p-6 shadow-lg">
-                <h2 class="text-xl font-bold text-navyBlue mb-4">Overall Clients</h2>
-                <canvas id="scaleQuestionChart" class="w-full h-64"></canvas>
-            </div>
-            <div class="bg-beige border-2 border-navyBlue rounded-lg p-6 shadow-lg">
-                <h2 class="text-xl font-bold text-navyBlue mb-4">Client Type Distribution</h2>
-                <canvas id="clientTypeChart" class="w-full h-64"></canvas>
-            </div>
-    
-            <div class="bg-beige border-2 border-navyBlue rounded-lg p-6 shadow-lg">
-                <h2 class="text-xl font-bold text-navyBlue mb-4">Gender</h2>
-                <canvas id="genderChart" class="w-full h-64"></canvas>
-            </div>
-        </div>
-
-
-
     </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
+    function openModal(modalId) {
+        var modal = document.getElementById(modalId);
+        if (modal) {
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            setTimeout(function() {
+                modal.classList.remove('opacity-0');
+                modal.classList.add('opacity-100');
+                modal.querySelector('.transform').classList.remove('scale-95');
+                modal.querySelector('.transform').classList.add('scale-100');
+            }, 10);
+        }
+    }
+
+    function closeModal(modalId) {
+        var modal = document.getElementById(modalId);
+        if (modal) {
+            modal.classList.remove('opacity-100');
+            modal.classList.add('opacity-0');
+            modal.querySelector('.transform').classList.add('scale-95');
+            modal.querySelector('.transform').classList.remove('scale-100');
+            setTimeout(function() {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }, 300);
+        }
+    }
+
+    function openSuggestionModal(surveyId, surveyName, surveyService, surveySuggestions) {
+        document.getElementById('surveyName').textContent = surveyName;
+        document.getElementById('surveyService').textContent = surveyService;
+        document.getElementById('surveySuggestions').textContent = surveySuggestions;
+        openModal('suggestionModal');
+    }
+
+    function closeSuggestionModal() {
+        closeModal('suggestionModal');
+    }
+
+    function openDeleteSurveyModal(surveyId, surveyName) {
+        openModal('deleteSurveyModal');
+        document.getElementById('deleteSurveyModalTitle').textContent = `Confirm Delete Survey by: ${surveyName}`;
+        const deleteForm = document.getElementById('deleteSurveyForm');
+        deleteForm.action = `/stats/sur/delete/${surveyId}/`;
+    }
+    
+    function closeDeleteSurveyModal() {
+        closeModal('deleteSurveyModal');
+    }
+
     const scaleQuestionData = {
         labels: ['Scale Question 1', 'Scale Question 2', 'Scale Question 3', 'Scale Question 4', 'Scale Question 5', 'Scale Question 6', 'Scale Question 7', 'Scale Question 8'],
         datasets: [{
