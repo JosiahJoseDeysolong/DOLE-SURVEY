@@ -12,3 +12,5 @@ urlpatterns = [
     path("__reload__/", include("django_browser_reload.urls")),
     path('email/', include('emails.urls')),
 ]
+ 
+handler404 = 'main.views.custom_404'

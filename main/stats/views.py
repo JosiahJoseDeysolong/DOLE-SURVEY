@@ -49,7 +49,9 @@ def survey_statistics(request, office_id):
     end_date = request.GET.get('end_date')
     selected_service = request.GET.get('service')
     search_query = request.GET.get('search', '')
-    surveys = Survey.objects.filter(office=office)
+
+    surveys = Survey.objects.filter(office=office).select_related('service')
+     
 
     if start_date and end_date:
         surveys = surveys.filter(date__range=[start_date, end_date])

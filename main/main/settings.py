@@ -23,10 +23,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure--5y*7kghf4ytf*ge4ov#y9x&0eb(v^!y=m!bvqnb0m7a9*j=z&'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ["127.0.0.1", "d0f6-180-193-208-138.ngrok-free.app"]
-CSRF_TRUSTED_ORIGINS = ['https://d0f6-180-193-208-138.ngrok-free.app']
+ALLOWED_HOSTS = ["127.0.0.1", "bb69-180-193-208-138.ngrok-free.app"]
+CSRF_TRUSTED_ORIGINS = ['https://bb69-180-193-208-138.ngrok-free.app']
 
 
 # Application definition
@@ -66,6 +66,9 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     "django_browser_reload.middleware.BrowserReloadMiddleware",
+
+    "whitenoise.middleware.WhiteNoiseMiddleware",
+
 ]
 
 ROOT_URLCONF = 'main.urls'
@@ -130,12 +133,18 @@ USE_I18N = True
 
 USE_TZ = True
 
-
+import os
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
-STATICFILES_DIRS = [BASE_DIR / "templates/static"]
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_DIRS = [
+    BASE_DIR / "templates/static",
+    BASE_DIR / 'theme/static',   
+
+    ]
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field

@@ -5,7 +5,10 @@ module.exports = {
         '../../**/templates/**/*.html',
     ],
     theme: {
-        extend: {            
+        extend: {          
+            textAlign: {
+                'justify': 'justify',
+              },  
             colors: {
                 'navyBlue': '#193441',
                 'navyLightBlue': '#3E606F',
